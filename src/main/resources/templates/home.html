@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/main ::head">
+</head>
+<body>
+    <nav th:replace="fragments/main ::navbar"></nav>
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Jumbotron Header -->
+        <header class="jumbotron my-4">
+            <h1 class="display-3">Welcome to JITS!</h1>
+            <p class="lead">Java Intelligent Tutoring System (JITS) is a brand new platform for learning
+            Java programming assisted with AI technologies.</p>
+            <a href="#" class="btn btn-primary btn-lg">Get Started!</a>
+        </header>
+
+    </div>
+    <!-- /.container -->
+    <footer th:replace="fragments/main ::footer"></footer>
+
+</body>
+</html>
