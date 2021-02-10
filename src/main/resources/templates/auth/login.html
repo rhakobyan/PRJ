@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/main ::head">
+</head>
+<body>
+<nav th:replace="fragments/main ::navbar"></nav>
+<!-- Page Content -->
+<div class="container">
+    <div class="row justify-content-center">
+        <form th:action="@{/login}" method="POST" enctype="utf8">
+            <h2>Log In</h2>
+            <hr>
+
+            <div class="form-group">
+                <input type="email" class="form-control" name="email" placeholder="KCL Email address"
+                       required="required">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="Password"
+                       required="required">
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+            </div>
+
+            <div class="hint-text">Don't have an account? <a href="/register">Register</a></div>
+        </form>
+    </div>
+</div>
+<!-- /.container -->
+<footer th:replace="fragments/main ::footer"></footer>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/main ::head">
+</head>
+<body>
+<nav th:replace="fragments/main ::navbar"></nav>
+<!-- Page Content -->
+<div class="container">
+    <div class="row justify-content-center">
+        <form th:action="@{/register}" th:object="${user}" method="POST" enctype="utf8">
+            <h2>Registration</h2>
+            <hr>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control" name="firstName" placeholder="First Name"
+                               th:field="*{firstName}" required="required" autofocus>
+                        <p th:each="error: ${#fields.errors('firstName')}"
+                           th:text="${error}">Validation error</p>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="lastName" placeholder="Last Name"
+                               th:field="*{lastName}" required="required">
+                        <p th:each="error: ${#fields.errors('lastName')}"
+                           th:text="${error}">Validation error</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" name="email" placeholder="KCL Email address"
+                       th:field="*{email}" required="required">
+                <p th:each="error: ${#fields.errors('email')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="Password"
+                       th:field="*{password}" required="required">
+                <p th:each="error: ${#fields.errors('password')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password"
+                       th:field="*{matchingPassword}" required="required">
+                <p th:each="error: ${#fields.errors('matchingPassword')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+            </div>
+
+            <div class="hint-text">Already have an account? <a href="#">Log In</a></div>
+        </form>
+    </div>
+</div>
+<!-- /.container -->
+<footer th:replace="fragments/main ::footer"></footer>
+
+</body>
+</html>
