@@ -9,40 +9,41 @@
     <div class="row justify-content-center">
         <form th:action="@{/register}" th:object="${user}" method="POST" enctype="utf8">
             <h2>Registration</h2>
+            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></div>
             <hr>
             <div class="form-group">
                 <div class="row">
                     <div class="col">
-                        <input type="text" class="form-control" name="firstName" placeholder="First Name"
-                               th:field="*{firstName}" required="required" autofocus>
-                        <p th:each="error: ${#fields.errors('firstName')}"
-                           th:text="${error}">Validation error</p>
+                        <input type="text" class="form-control" th:errorclass="is-invalid"
+                               name="firstName" placeholder="First Name" th:field="*{firstName}" autofocus>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('firstName')}"
+                           th:errors="*{firstName}">Validation error</div>
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" name="lastName" placeholder="Last Name"
-                               th:field="*{lastName}" required="required">
-                        <p th:each="error: ${#fields.errors('lastName')}"
-                           th:text="${error}">Validation error</p>
+                        <input type="text" class="form-control" name="lastName" th:errorclass="is-invalid"
+                               placeholder="Last Name" th:field="*{lastName}">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('lastName')}"
+                             th:errors="*{lastName}">Validation error</div>
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <input type="email" class="form-control" name="email" placeholder="KCL Email address"
-                       th:field="*{email}" required="required">
-                <p th:each="error: ${#fields.errors('email')}"
-                   th:text="${error}">Validation error</p>
+                <input type="email" class="form-control" name="email" th:errorclass="is-invalid"
+                       placeholder="KCL Email address" th:field="*{email}">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                     th:errors="*{email}">Validation error</div>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="password" placeholder="Password"
-                       th:field="*{password}" required="required">
-                <p th:each="error: ${#fields.errors('password')}"
-                   th:text="${error}">Validation error</p>
+                <input type="password" class="form-control" name="password" th:errorclass="is-invalid"
+                       placeholder="Password" th:field="*{password}">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                     th:errors="*{password}">Validation error</div>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password"
-                       th:field="*{matchingPassword}" required="required">
-                <p th:each="error: ${#fields.errors('matchingPassword')}"
-                   th:text="${error}">Validation error</p>
+                <input type="password" class="form-control" name="confirmPassword" th:errorclass="is-invalid"
+                       placeholder="Confirm Password" th:field="*{matchingPassword}">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('global')}"
+                     th:errors="*{global}">Validation error</div>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary btn-lg">Submit</button>

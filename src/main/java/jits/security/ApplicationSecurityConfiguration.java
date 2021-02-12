@@ -1,4 +1,4 @@
-package jits;
+package jits.security;
 
 import jits.service.JITSUserDetailsService;
 

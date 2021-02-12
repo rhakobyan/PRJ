@@ -1,8 +1,13 @@
 package jits.dto;
 
+import jits.validation.UniqueEmail;
+import jits.validation.ValidEmail;
+import jits.validation.ValidMatchingPassword;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+@ValidMatchingPassword
 public class UserDto {
     @NotNull
     @NotEmpty
@@ -17,8 +22,8 @@ public class UserDto {
     private String password;
     private String matchingPassword;
 
-    @NotNull
-    @NotEmpty
+    @ValidEmail
+    @UniqueEmail
     private String email;
 
     public String getFirstName() {

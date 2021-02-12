@@ -1,4 +1,4 @@
-package jits;
+package jits.service;
 
 import jits.model.User;
 
