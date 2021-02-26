@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/main ::head">
+    </head>
+    <body class="d-flex flex-column">
+        <nav th:replace="fragments/main ::navbar"></nav>
+        <!-- Page Content -->
+        <main role="main" class="container">
+            <h2>Learn Java with JITS</h2>
+            <br>
+            <div>
+                <div th:each="topic: ${topics}" class="topicContainer">
+                    <div>
+                        <div data-toggle="collapse" th:attr="data-target='#collapse_'+${topic.id}"
+                             aria-expanded="false" th:attrappend="aria-controls='collapse_'+${topic.id}"
+                             class="topics">
+                            <span class="topicTitle" th:text="${topic.title}">Title</span>
+                            <i class="fa fa-chevron-down"></i>
+                            <i class="fa fa-chevron-up"></i>
+                        </div>
+                        <br><br>
+                        <p class="lessonCount" th:text="${topic.lessons.size()}+' Lessons'">Lessons</p>
+                    </div>
+                    <div class="collapse" th:id="collapse_+${topic.id}">
+                        <p th:text="${topic.description}"></p>
+                        <div th:each="lesson: ${topic.lessons}">
+                            <i class="fa fa-code"></i>
+                            <a class="lessonTitle" th:href="'lessons/'+${lesson.id}" th:text="${lesson.title}">Lesson</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer th:replace="fragments/main ::footer"></footer>
+
+    </body>
+</html>

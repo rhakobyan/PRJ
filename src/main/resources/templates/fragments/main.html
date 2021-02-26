@@ -2,18 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <html lang="en">
 <head th:fragment="head">
-    <style>
-        html,body {
-        height: 100%;
-        }
-        body {
-        padding-top: 100px;
-        }
-    </style>
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/main.css">
 
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -44,7 +37,7 @@
 </nav>
 
 <!-- Footer -->
-<footer th:fragment="footer" class="py-5 bg-dark footer fixed-bottom">
+<footer th:fragment="footer" class="mt-auto py-4 bg-dark footer">
     <div class="container">
         <p class="m-0 text-center text-white">Copyright &copy; Java Intelligent Tutoring System
             <span th:text="${#dates.year(#dates.createNow())}"></span></p>
