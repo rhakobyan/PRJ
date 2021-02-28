@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/main ::head(title=${lesson.title})"></head>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/theme/darcula.min.css" integrity="sha512-kqCOYFDdyQF4JM8RddA6rMBi9oaLdR0aEACdB95Xl1EgaBhaXMIe8T4uxmPitfq4qRmHqo+nBU2d1l+M4zUx1g==" crossorigin="anonymous" />
+        <link rel="stylesheet" href="/css/lesson.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.js" integrity="sha512-M1DpFDDFHNgGdgVsSkTP1sjfWC7mQFJM3obQo8gyKHbZmbmr95Kl9wPYa5T70BFQBi0+/TlcG6IZDLowJCbKBQ==" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/javascript/javascript.min.js" integrity="sha512-+tn2IYnLwD2J9p6Nrn/Dl7ag9lluHA0GAblT/vnMiJV8DU/iDsldgf+9XbEqZUee2ThyDtfmSDb+IDZ9u7jrSA==" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/clike/clike.min.js" integrity="sha512-PeD3V/6m5bFv3qyIVKgDh+huybMHjvsLWuW7ZH5WZsS+hY0pZNU24si/Yja/2D4c/ff++c6k1S240dKwhJEJzw==" crossorigin="anonymous"></script>
+        <script src="/js/codeEditor.js" type="text/javascript"></script>
+    </head>
+
+    <body class="d-flex flex-column">
+        <nav th:replace="fragments/main ::navbar"></nav>
+
+        <div class="container-fluid">
+            <div class="row lesson">
+                <div class="col-md-5">col-md-5</div>
+                <div class="col-md-7">
+                    <div class="row" id="codeEditor"></div>
+                    <div class="row bg-dark" id="output"></div>
+                </div>
+            </div>
+            <div class="row bg-secondary bottom-panel">
+                <div class="col-md">
+                    1
+                </div>
+                <div class="col-md">
+                    2
+                </div>
+                <div class="col-md">
+                    3
+                </div>
+                <div class="col-md">
+                    <button class="btn btn-success" style="float:right;" id="run">
+                        <i class="fa fa-play" aria-hidden="true"></i> Run
+                    </button>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="fragments/main ::footer"></footer>
+    </body>
+</html>

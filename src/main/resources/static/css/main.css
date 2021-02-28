@@ -61,3 +61,8 @@ main {
 .lessonTitle:hover{
     color: black;
 }
+
+.CodeMirror {
+    width: 100%;
+    min-height: 100%;
+}

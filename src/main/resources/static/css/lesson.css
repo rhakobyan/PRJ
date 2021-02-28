@@ -1,0 +1,27 @@
+body {
+    padding-top: 56px;
+}
+
+.container-fluid {
+    min-height:calc(100vh - 56px);
+}
+
+.lesson {
+    height:93%;
+}
+
+#codeEditor {
+    height:80%;
+}
+
+#output {
+    height:20%;
+    border:5px solid;
+    overflow: auto;
+    padding: 5px;
+}
+
+.bottom-panel {
+    height:7%;
+    padding: 5px;
+}
