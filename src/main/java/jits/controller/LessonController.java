@@ -3,7 +3,7 @@ package jits.controller;
 import jits.model.Lesson;
 import jits.repository.LessonRepository;
 import jits.service.ExerciseCompiler;
-import netscape.javascript.JSObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,7 +29,6 @@ public class LessonController {
     @PostMapping("/lessons/run")
     @ResponseBody
     public Map<String, String> runLesson(@RequestParam String code) {
-        Map<String, String> message = exerciseCompiler.runCode(code);
-        return message;
+        return exerciseCompiler.runCode(code);
     }
 }

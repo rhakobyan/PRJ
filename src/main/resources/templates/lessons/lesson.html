@@ -24,17 +24,29 @@
             </div>
             <div class="row bg-secondary bottom-panel">
                 <div class="col-md">
-                    1
+<!--                    line-height:inherit!important;-->
+                    <button class="btn">
+                    <i class="fa fa-bars fa-lg" aria-hidden="true" style="font-size:30px;"></i>
+                    </button>
+                    <span th:text="${lesson.id}+'.'">Id</span>
+                    <span th:text="${lesson.title}">Title</span>
                 </div>
                 <div class="col-md">
-                    2
-                </div>
-                <div class="col-md">
-                    3
+                    <div>
+                        <button class="btn btn-light" style="margin-right: 100px;">
+                            <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
+                        </button>
+                        <button class="btn btn-light">
+                             Next <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="col-md">
                     <button class="btn btn-success" style="float:right;" id="run">
                         <i class="fa fa-play" aria-hidden="true"></i> Run
+                    </button>
+                    <button class="btn btn-info" style="float:right; margin-right:25px;">
+                        <i class="fa fa-question" aria-hidden="true"></i> Hint
                     </button>
                 </div>
             </div>
