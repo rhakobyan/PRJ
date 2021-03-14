@@ -19,6 +19,9 @@ public class Lesson {
     @JoinColumn(name = "topic_id", referencedColumnName = "id")
     private Topic topic;
 
+    @OneToOne(mappedBy = "lesson")
+    private Problem problem;
+
     public long getId() {
         return id;
     }
@@ -41,5 +44,13 @@ public class Lesson {
 
     public void setExplanation(String explanation) {
         this.explanation = explanation;
+    }
+
+    public Problem getProblem() {
+        return problem;
+    }
+
+    public void setProblem(Problem problem) {
+        this.problem = problem;
     }
 }

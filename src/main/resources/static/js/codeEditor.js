@@ -1,6 +1,6 @@
 $(function() {
     var javaCodeMirror = CodeMirror($('#codeEditor')[0], {
-              value: "public class Main {\n\n    public static void main(String[] args) {\n        System.out.println(\"Hello\");\n    }\n}",
+              value: problem,
               mode:  "text/x-java",
               lineNumbers: true,
               indentUnit: 4,
@@ -22,6 +22,19 @@ $(function() {
                span = "<span class='text-light' style='white-space: pre-wrap;'>" +result.message + "</span>";
             }
             $("#output").html(span);
+        });
+    });
+
+    $("#hint").click(function() {
+        var codeEditorValue = javaCodeMirror.getValue();
+        $.post("/lessons/hint",
+        {
+            id: problemId,
+            code: codeEditorValue
+        },
+        function(result, status) {
+            $("#hintModal").modal("show");
+            $("#hintParagraph").html(result);
         });
     });
 

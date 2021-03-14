@@ -40,3 +40,9 @@ out/
 .DS_Store
 
 /exerciseCompilation
+
+/src/main/java/jits/antlr/JavaLexer.g4
+/src/main/java/jits/antlr/JavaParser.g4
+/src/main/java/jits/ast
+/src/main/java/jits/droolsConfiguration
+/src/main/resources/rules
