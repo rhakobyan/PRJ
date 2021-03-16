@@ -1,13 +1,8 @@
 package jits.model;
 
-import org.springframework.core.io.ClassPathResource;
-
 import javax.persistence.*;
-import java.io.File;
-import java.io.FileInputStream;
 import jits.util.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Entity
@@ -22,6 +17,11 @@ public class Problem {
 
     @Transient
     private String problemBody;
+
+    @Column(nullable = false)
+    private int solutionStartIndex;
+    @Column(nullable = false)
+    private int solutionEndLength;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lesson_id", referencedColumnName = "id")
@@ -53,6 +53,14 @@ public class Problem {
 
     public String getProblemBody() {
         return problemBody;
+    }
+
+    public int getSolutionStartIndex() {
+        return solutionStartIndex;
+    }
+
+    public int getSolutionEndLength() {
+        return solutionEndLength;
     }
 
     public List<Solution> getSolutions() {

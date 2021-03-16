@@ -24,6 +24,14 @@ public class FeedbackModule {
                 stringBuilder.append("You need to write a while loop");
                 break;
             }
+            case "do": {
+                stringBuilder.append("You need to write a do-while loop");
+                break;
+            }
+            case "switch": {
+                stringBuilder.append("You need to write a switch statement");
+                break;
+            }
             case "==":
             case "!=":
             case ">":

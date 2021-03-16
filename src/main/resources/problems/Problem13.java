@@ -1,6 +1,8 @@
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        double score = 41.29;
+        // Write your code here
+
     }
 }

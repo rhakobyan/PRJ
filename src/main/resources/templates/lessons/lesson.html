@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
     <head th:replace="fragments/main ::head(title=${lesson.title})"></head>
     <head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous"/>
@@ -24,7 +24,13 @@
 
         <div class="container-fluid">
             <div class="row lesson">
-                <div class="col-md-5">col-md-5</div>
+                <div class="col-md-5" style="padding:10px; height:100%; overflow-y: auto;">
+                    <h3>
+                        <i class='fa fa-book'></i> <span th:text='${lesson.title}'>Title</span>
+                    </h3>
+                    <hr>
+                    <div  th:utext="${lesson.explanation}">explanation</div>
+                </div>
                 <div class="col-md-7">
                     <div class="row" id="codeEditor"></div>
                     <div class="row bg-dark" id="output"></div>
@@ -58,7 +64,6 @@
                 </div>
             </div>
         </div>
-        <footer th:replace="fragments/main ::footer"></footer>
 
         <div class="modal" id="hintModal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">

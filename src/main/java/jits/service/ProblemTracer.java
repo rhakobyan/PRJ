@@ -62,17 +62,15 @@ public class ProblemTracer {
 
     public String getHint(Problem problem, String code) {
         String normalisedCode = normalise(problem, code);
+        System.out.println("normalisedCode");
+        System.out.println(normalisedCode);
         JavaLexer lexer = new JavaLexer(CharStreams.fromString(normalisedCode));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         JavaParser parser = new JavaParser(tokens);
         ParseTree tree = parser.block();
         AbstractTreeConstructor constructor = new AbstractTreeConstructor();
 
-        System.out.println("Model answer:");
-//        solutionASTs.get(0).printTree();
-        System.out.println("Current solution");
         JavaASTNode currentSolution = constructor.visit(tree);
-//        currentSolution.printTree();
 
         JavaASTNode comparison = compareTrees(solutionASTs.get(0), currentSolution);
         if (comparison.getName().equals("success-node"))
@@ -108,60 +106,6 @@ public class ProblemTracer {
         return new JavaASTNode("success-node", "");
     }
 
-    public String getHint2(Problem problem, String code) {
-        String normalisedCode = normalise(problem, code);
-        JavaLexer lexer = new JavaLexer(CharStreams.fromString(normalisedCode));
-//        Java8Lexer java8Lexer = new Java8Lexer(CharStreams.fromString(normalisedCode));
-//
-//        CommonTokenStream tokens = new CommonTokenStream(lexer);
-//        Java8Parser parser = new Java8Parser(tokens);
-//        ParseTree tree = parser.blockStatement();
-//        System.out.println(tree.toStringTree(parser));
-//        Java8ParserBaseVisitor<JavaAST.Node> visitor = new Java8ParserBaseVisitor<>();
-//        JavaAST.Node ifStatement = visitor.visit(tree);
-//        ifStatement.printContent();
-//        System.out.println(tree.toStringTree(parser));
-//        ParseTreeWalker walker = new ParseTreeWalker();
-//        walker.walk(new TraceListener(), tree);
-//        List<Token> tokens = new ArrayList<>();
-//        for (Token token = lexer.nextToken(); token.getType() != Token.EOF; token = lexer.nextToken()) {
-//            if (ignoreToken(token.getType()))
-//                continue;
-//            tokens.add(token);
-////            System.out.println(token.getType());
-////            System.out.println(token.getText());
-////            System.out.println(token);
-//        }
-//        try {
-//            int currentTokenIndex = 0;
-//            File hints = new ClassPathResource("solutionTracers/hints.json").getFile();
-//            FileInputStream fis = new FileInputStream(hints);
-//            String hintsTxt = IOUtils.toString(fis, StandardCharsets.UTF_8);
-//            JSONArray hintsArr = new JSONArray(hintsTxt);
-//            for (int i = 0; i < hintsArr.length(); ++i) {
-//                JSONObject node = hintsArr.getJSONObject(i);
-//                if (tokens.size() - currentTokenIndex < node.getInt("tokensNum"))
-//                    return node.getString("hint");
-//                StringBuilder builder = new StringBuilder();
-//
-//                int c = 0;
-//                while (c < node.getInt("tokensNum")) {
-//                    if (!tokens.get(currentTokenIndex).getText().equals(node.getJSONArray("values").getString(c))) {
-//                        System.out.println(tokens.get(currentTokenIndex).getText() + "vs" + node.getJSONArray("values").getString(c));
-//                        return node.getString("hint");
-//                    }
-//                    ++currentTokenIndex;
-//                    ++c;
-//                }
-//            }
-//
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-
-        return "All seems well";
-    }
-
     public void getTestResponse(Problem problem) {
         KieContainer kieContainer = beanFactory.getBean(KieContainer.class, "rules/rules.drl");
         KieSession kieSession = kieContainer.newKieSession();
@@ -170,22 +114,17 @@ public class ProblemTracer {
     }
 
     private String normalise(Problem problem, String code) {
+        System.out.println(problem.getSolutionStartIndex());
+        System.out.println(problem.getSolutionEndLength());
         String[] lines = code.split(System.getProperty("line.separator"));
         StringJoiner joiner = new StringJoiner("");
         joiner.add("{");
-        for (int i = 4; i < lines.length - 2; ++i) {
+        for (int i = problem.getSolutionStartIndex(); i < lines.length - problem.getSolutionEndLength(); ++i) {
             joiner.add(lines[i]);
         }
         joiner.add("}");
-        String main =  joiner.toString();
-        //Pattern pattern = Pattern.compile("^if(\\s)*\\(.*\\)(\\s)*?!.*(;);");
-        return main;
+
+        return joiner.toString();
     }
 
-    private boolean ignoreToken(int type) {
-        if (type == JavaLexer.WS)
-            return true;
-
-        return false;
-    }
 }
