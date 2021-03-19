@@ -33,3 +33,14 @@ pre, code {
 pre {
     padding: 7px;
 }
+
+a[disabled], .btn-disabled {
+    opacity: 0.4;
+    cursor: default !important;
+    pointer-events: none;
+}
+
+#showSolution {
+    background-color: #fff700;
+    display: none;
+}

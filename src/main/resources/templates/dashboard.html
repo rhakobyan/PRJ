@@ -9,6 +9,14 @@
             <h2>Learn Java with JITS</h2>
             <br>
             <div>
+                <div style="margin-bottom:50px; margin-left: 10%; margin-right:10%;">
+                    <h5>Your Progress</h5>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar" role="progressbar" th:style="'width: '+@{${(#authentication.getPrincipal().getUser().completedLessons.size *100)/totalLessons}}+'%;'" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                        th:text="${(#authentication.getPrincipal().getUser().completedLessons.size *100)/totalLessons} + '%'">
+                        </div>
+                    </div>
+                </div>
                 <div th:each="topic: ${topics}" class="topicContainer">
                     <div>
                         <div data-toggle="collapse" th:attr="data-target='#collapse_'+${topic.id}"
@@ -26,7 +34,13 @@
                         <div th:each="lesson: ${topic.lessons}">
                             <i class="fa fa-code"></i>
                             <a class="lessonTitle" th:href="'lessons/'+${lesson.id}" th:text="${lesson.title}">Lesson</a>
+                                <i th:each="user : ${lesson.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle" aria-hidden="true"></i>
+                            </div>
+                        <div th:if="${topic.quiz != null}">
+                            <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                            <a class="lessonTitle" th:href="'quizzes/'+${topic.quiz.id}" th:text="${topic.quiz.title}">Quiz</a>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

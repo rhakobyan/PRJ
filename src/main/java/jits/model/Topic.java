@@ -19,6 +19,9 @@ public class Topic {
     @OneToMany(mappedBy = "topic")
     private List<Lesson> lessons;
 
+    @OneToOne(mappedBy = "topic")
+    private Quiz quiz;
+
     public long getId() {
         return id;
     }
@@ -49,5 +52,13 @@ public class Topic {
 
     public void setLessons(List<Lesson> lessons) {
         this.lessons = lessons;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
     }
 }

@@ -1,27 +1,28 @@
-package jits.service;
+package jits.studentmodel;
 
-import org.springframework.stereotype.Service;
+import jits.model.Lesson;
+import jits.model.Problem;
+import jits.util.FileIO;
 
 import javax.tools.*;
 import java.io.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-import java.util.*;
+public class Runner {
 
-@Service
-public class ExerciseCompiler {
-
-    public Map<String, String> runCode(String code) {
+    public static Map<String, String> run(String code) {
         HashMap<String, String> map = new HashMap<>();
         StringBuilder message = new StringBuilder();
 
         try {
-            writeToFile(code);
+            FileIO.writeFileForCompilation(code);
             File exerciseFile = new File("exerciseCompilation/Main.java");
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
@@ -69,11 +70,5 @@ public class ExerciseCompiler {
 
         map.put("message", message.toString());
         return map;
-    }
-
-    private void writeToFile(String code) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("exerciseCompilation/Main.java"));
-        writer.write(code);
-        writer.close();
     }
 }

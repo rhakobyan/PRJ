@@ -21,7 +21,12 @@ public class HomeController {
             return "home";
 
         List<Topic> topics = topicRepository.findAll();
+        int totalLessons = 0;
+        for (Topic topic : topics)
+            totalLessons += topic.getLessons().size();
+
         model.addAttribute("topics", topics);
+        model.addAttribute("totalLessons", totalLessons);
         return "dashboard";
     }
 

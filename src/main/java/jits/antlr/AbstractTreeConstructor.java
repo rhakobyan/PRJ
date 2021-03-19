@@ -5,6 +5,9 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
     @Override
     public JavaASTNode visitBlock(JavaParser.BlockContext ctx) {
 //        System.out.println("visiting block");
+//        if (ctx.blockStatement().size() == 1)
+//            return visit(ctx.blockStatement(0));
+
         JavaASTNode blockNode = new JavaASTNode("block", ctx.getText());
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             if (!ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
@@ -31,8 +34,20 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
                     !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") &&
                     !ctx.getChild(i).getText().equals(")") && !ctx.getChild(i).getText().equals(";") &&
                     (ctx.ELSE() == null || !ctx.getChild(i).getText().equals(ctx.ELSE().getText())) &&
-                    (ctx.WHILE() == null || !ctx.getChild(i).getText().equals(ctx.WHILE().getText())))
-                statementNode.addChild(visit(ctx.getChild(i)));
+                    (ctx.WHILE() == null || !ctx.getChild(i).getText().equals(ctx.WHILE().getText()))) {
+                JavaASTNode child = visit(ctx.getChild(i));
+                boolean addedChild = false;
+                for (int j = 0; j < ctx.statement().size(); ++j) {
+                    if (ctx.statement(j).getText().equals(child.getText() + ";") && !child.getName().equals("block")) {
+                        JavaASTNode block = new JavaASTNode("block", child.getText());
+                        block.addChild(child);
+                        statementNode.addChild(block);
+                        addedChild = true;
+                    }
+                }
+                if (!addedChild)
+                    statementNode.addChild(child);
+            }
 
         }
 
@@ -48,6 +63,7 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
 
     @Override
     public JavaASTNode visitExpression(JavaParser.ExpressionContext ctx) {
+        System.out.println("visiting expression " + ctx.getText());
 //        System.out.println("visiting expression");
         if (ctx.getChildCount() == 0)
             return new JavaASTNode(ctx.getText(), ctx.getText());
@@ -97,10 +113,24 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
             return visitChildren(ctx);
 
         JavaASTNode expressionNode = new JavaASTNode(name, ctx.getText());
+        boolean reverse = false;
+
+            if (ctx.bop.getText().equals(">=")) {
+                expressionNode = new JavaASTNode("<=", ctx.getText());
+                reverse = true;
+            } else if (ctx.bop.getText().equals(">")) {
+                expressionNode = new JavaASTNode("<", ctx.getText());
+                reverse = true;
+            }
+        System.out.println(reverse);
         for (int i = 0; i < ctx.getChildCount(); ++i) {
 //            System.out.println(ctx.getText());
-            if (!ctx.getChild(i).getText().equals(ctx.bop.getText()) && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
-                expressionNode.addChild(visit(ctx.getChild(i)));
+            if (!ctx.getChild(i).getText().equals(ctx.bop.getText()) && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")")) {
+                if (reverse)
+                    expressionNode.addChild(visit(ctx.getChild(ctx.getChildCount() - i - 1)));
+                else
+                    expressionNode.addChild(visit(ctx.getChild(i)));
+            }
         }
         return  expressionNode;
     }
@@ -110,7 +140,8 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
 //        System.out.println("visiting primary");
         if (ctx.IDENTIFIER() != null || ctx.THIS() != null || ctx.SUPER() != null)
             return new JavaASTNode(ctx.getText(), ctx.getText());
-
+        if (ctx.LPAREN() != null && ctx.RPAREN() != null && ctx.expression() != null)
+            return visit(ctx.expression());
         return visitChildren(ctx);
     }
 
@@ -138,7 +169,8 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
 //        System.out.println("visiting local variable declaration");
         JavaASTNode localVariableNode = new JavaASTNode("local-var", ctx.getText());
         for (int i = 0; i < ctx.getChildCount(); ++i) {
-            localVariableNode.addChild(visit(ctx.getChild(i)));
+            if (!ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
+                localVariableNode.addChild(visit(ctx.getChild(i)));
         }
         return localVariableNode;
     }
@@ -152,7 +184,7 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
     @Override
     public JavaASTNode visitClassOrInterfaceType(JavaParser.ClassOrInterfaceTypeContext ctx) {
 //        System.out.println("visiting class");
-        return new JavaASTNode(ctx.toStringTree(), ctx.getText());
+        return new JavaASTNode(ctx.getStart().getText(), ctx.getText());
     }
 
     @Override
@@ -161,7 +193,6 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
         if (ctx.ASSIGN() == null) {
             visitChildren(ctx);
         }
-
         JavaASTNode assignNode = new JavaASTNode("=", ctx.getText());
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             if (!ctx.getChild(i).getText().equals("=") && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
@@ -179,7 +210,9 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
     @Override
     public JavaASTNode visitMethodCall(JavaParser.MethodCallContext ctx) {
 //        System.out.println("visiting method call");
-        JavaASTNode methodCallNode = new JavaASTNode(ctx.getStart().getText(), ctx.getText());
+        JavaASTNode methodCallNode = new JavaASTNode("method-call", ctx.getText());
+        JavaASTNode methodCallName = new JavaASTNode(ctx.getStart().getText(), ctx.getText());
+        methodCallNode.addChild(methodCallName);
         if (ctx.expressionList() != null)
             methodCallNode.addChild(visit(ctx.expressionList().expression(0)));
 
@@ -225,7 +258,7 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
         if (ctx.DEFAULT() != null)
             return new JavaASTNode("switch-default", ctx.getText());
         else if (ctx.IDENTIFIER() != null)
-            return new JavaASTNode(ctx.IDENTIFIER().getText(), ctx.IDENTIFIER().getText());
+            return new JavaASTNode(ctx.IDENTIFIER().getText(), ctx.getText());
         else if (ctx.constantExpression != null)
             return visit(ctx.constantExpression);
 

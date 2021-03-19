@@ -17,8 +17,10 @@ public class JavaASTNode {
     }
 
     public void addChild(JavaASTNode node) {
-        if (node == null)
+        if (node == null) {
+            System.out.println("adding null node to " + text);
             node = new JavaASTNode("null-node", "");
+        }
 
         node.setParent(this);
         this.children.add(node);

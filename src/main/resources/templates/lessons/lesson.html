@@ -14,6 +14,7 @@
 
                 var problem = /*[[${lesson.problem.problemBody}]]*/ 'default';
                 var problemId = /*[[${lesson.problem.id}]]*/ -1;
+                var solutionRequired = /*[[${lesson.problem.solutionRequired}]]*/ false;
 
             /*]]>*/
         </script>
@@ -46,12 +47,20 @@
                 </div>
                 <div class="col-md">
                     <div>
-                        <button class="btn btn-light" style="margin-right: 100px;">
+                        <a th:if="${prev != null}" class="btn btn-light" style="margin-right: 100px;"
+                           th:href="'/lessons/'+${prev.id}">
                             <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
-                        </button>
-                        <button class="btn btn-light">
+                        </a>
+                        <a th:if="${prev == null}" class="btn btn-light" style="margin-right: 100px;" disabled>
+                            <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
+                        </a>
+                        <a th:if="${next != null}" th:href="'/lessons/'+${next.id}" id="nextLesson"
+                           th:class="${#sets.contains(#authentication.getPrincipal().getUser().completedLessons, lesson)}? 'btn btn-warning' : 'btn btn-light btn-disabled'">
                              Next <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        </button>
+                        </a>
+                        <a th:if="${next == null}" class="btn btn-light" disabled>
+                            Next <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
                 <div class="col-md">
@@ -61,21 +70,24 @@
                     <button class="btn btn-info" id="hint" style="float:right; margin-right:25px;">
                         <i class="fa fa-question" aria-hidden="true"></i> Hint
                     </button>
+                    <button th:if="${lesson.problem.solutionRequired}" class="btn" id="showSolution">
+                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i> Show Solution
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="modal" id="hintModal" tabindex="-1" role="dialog">
+        <div class="modal" id="modal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Hint</h5>
+                        <h5 class="modal-title" id="modalTitle">Hint</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p id="hintParagraph"></p>
+                        <p id="modalParagraph"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>

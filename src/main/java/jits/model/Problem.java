@@ -1,7 +1,7 @@
 package jits.model;
 
 import javax.persistence.*;
-import jits.util.FileReader;
+import jits.util.FileIO;
 import java.io.IOException;
 import java.util.List;
 
@@ -15,6 +15,9 @@ public class Problem {
     @Column(nullable = false)
     private String problemFile;
 
+    @Column(columnDefinition="tinyint(1) default 1")
+    private boolean solutionRequired;
+
     @Transient
     private String problemBody;
 
@@ -26,6 +29,12 @@ public class Problem {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lesson_id", referencedColumnName = "id")
     private Lesson lesson;
+
+    @OneToMany(mappedBy = "problem")
+    private List<Solution> solutions;
+
+    @OneToMany(mappedBy = "problem")
+    private List<Misconception> misconceptions;
 
     public long getId() {
         return id;
@@ -41,6 +50,14 @@ public class Problem {
 
     public void setProblemFile(String problemFile) {
         this.problemFile = problemFile;
+    }
+
+    public boolean isSolutionRequired() {
+        return solutionRequired;
+    }
+
+    public void setSolutionRequired(boolean solutionRequired) {
+        this.solutionRequired = solutionRequired;
     }
 
     public Lesson getLesson() {
@@ -71,12 +88,13 @@ public class Problem {
         this.solutions = solutions;
     }
 
-    @OneToMany(mappedBy = "problem")
-    private List<Solution> solutions;
+    public List<Misconception> getMisconceptions() {
+        return misconceptions;
+    }
 
     public void setProblemBody() {
         try {
-            this.problemBody = FileReader.resourceFileToString(this.getProblemFile());
+            this.problemBody = FileIO.resourceFileToString(this.getProblemFile());
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -3,6 +3,8 @@ package jits.model;
 import jits.dto.UserDto;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -22,6 +24,10 @@ public class User {
 
     @Column(name = "last_name", nullable = false, length = 20)
     private String lastName;
+
+
+    @ManyToMany(mappedBy = "studentsCompleted", fetch = FetchType.EAGER)
+    Set<Lesson> completedLessons;
 
     public User(UserDto userDto) {
         this.email = userDto.getEmail();
@@ -70,5 +76,13 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Set<Lesson> getCompletedLessons() {
+        return completedLessons;
+    }
+
+    public void addCompletedLesson(Lesson lesson) {
+        this.completedLessons.add(lesson);
     }
 }
