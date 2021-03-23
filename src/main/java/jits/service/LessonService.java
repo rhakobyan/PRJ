@@ -14,8 +14,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.concurrent.*;
 
 @Service
 public class LessonService {
@@ -36,26 +40,46 @@ public class LessonService {
 
     }
 
+    @SuppressWarnings("deprecation")
     public Map<String, String> runCode(Problem problem, String code) {
-        Map<String, String> compilation = Runner.run(code);
-        if (!compilation.get("type").equals("success"))
-            return compilation;
+        Map<String, String> compilation;
+        Runner runner = new Runner(code);
 
-        if (!problem.isSolutionRequired() ||
-                (problem.isSolutionRequired() && solutionTracer.successfulTrace(solutionTracer.trace(problem, code)))) {
-            compilation.put("solved", "true");
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            User student = ((JITSUserDetails) auth.getPrincipal()).getUser();
-            System.out.println(problem.getLesson().getId());
-            student.addCompletedLesson(problem.getLesson());
-            problem.getLesson().addStudentsCompleted(student);
-            lessonRepository.save(problem.getLesson());
-            userRepository.save(student);
-        } else {
-            compilation.put("solved", "false");
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Map<String, String>> future = executor.submit(runner);
+        try {
+            compilation = future.get(5, TimeUnit.SECONDS);
+            if (!compilation.get("type").equals("success"))
+                return compilation;
+
+            if (!problem.isSolutionRequired() ||
+                    (problem.isSolutionRequired() && solutionTracer.successfulTrace(solutionTracer.trace(problem, code)))) {
+                compilation.put("solved", "true");
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                User student = ((JITSUserDetails) auth.getPrincipal()).getUser();
+                System.out.println(problem.getLesson().getId());
+                student.addCompletedLesson(problem.getLesson());
+                problem.getLesson().addStudentsCompleted(student);
+                lessonRepository.save(problem.getLesson());
+                userRepository.save(student);
+            } else {
+                compilation.put("solved", "false");
+            }
+        } catch (TimeoutException | ExecutionException | InterruptedException ex) {
+            Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+            for(Thread thread : threadSet){
+                if(thread.getId()==runner.getThreadId()){
+                        thread.stop();
+                }
+            }
+//            future.cancel(true);
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+            compilation = new HashMap<>();
+            compilation.put("type", "error");
+            compilation.put("message", "Program took too long to execute!");
         }
 
-        return compilation;
+            return compilation;
     }
 
     public String getHint(Problem problem, String code) {

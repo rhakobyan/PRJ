@@ -2,6 +2,7 @@ package jits.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "quiz")
@@ -21,7 +22,17 @@ public class Quiz {
     @OneToMany(mappedBy = "quiz")
     private List<Question> questions;
 
-    public Long getId() {
+    @Column(nullable = false)
+    private double passPercent;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "quiz_complete",
+            joinColumns = @JoinColumn(name = "quiz_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    Set<User> studentsCompleted;
+
+    public long getId() {
         return id;
     }
 
@@ -51,5 +62,40 @@ public class Quiz {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public double getPassPercent() {
+        return passPercent;
+    }
+
+    public void setPassPercent(double passPercent) {
+        this.passPercent = passPercent;
+    }
+
+    public Set<User> getStudentsCompleted() {
+        return studentsCompleted;
+    }
+
+    public void addStudentsCompleted(User user) {
+        this.studentsCompleted.add(user);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Quiz) {
+            Quiz quiz = (Quiz) object;
+
+            if (quiz.getId() == this.id)
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        final int prime = 31;
+        int result = 17;
+        return prime * result + this.id.hashCode();
     }
 }

@@ -26,13 +26,6 @@ body {
     padding: 5px;
 }
 
-pre, code {
-    white-space: pre-line;
-}
-
-pre {
-    padding: 7px;
-}
 
 a[disabled], .btn-disabled {
     opacity: 0.4;

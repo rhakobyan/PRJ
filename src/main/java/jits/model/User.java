@@ -29,6 +29,9 @@ public class User {
     @ManyToMany(mappedBy = "studentsCompleted", fetch = FetchType.EAGER)
     Set<Lesson> completedLessons;
 
+    @ManyToMany(mappedBy = "studentsCompleted", fetch = FetchType.EAGER)
+    Set<Quiz> completedQuizzes;
+
     public User(UserDto userDto) {
         this.email = userDto.getEmail();
         this.password = userDto.getPassword();
@@ -84,5 +87,13 @@ public class User {
 
     public void addCompletedLesson(Lesson lesson) {
         this.completedLessons.add(lesson);
+    }
+
+    public Set<Quiz> getCompletedQuizzes() {
+        return completedQuizzes;
+    }
+
+    public void addCompletedQuiz(Quiz completedQuiz) {
+        this.completedQuizzes.add(completedQuiz);
     }
 }

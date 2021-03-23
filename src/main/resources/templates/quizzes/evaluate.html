@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/main ::head(title=${quiz.title})">
+</head>
+<body class="d-flex flex-column">
+<nav th:replace="fragments/main ::navbar"></nav>
+<!-- Page Content -->
+<div class="container">
+    <h2 th:text="${quiz.title}">Quiz</h2>
+    <h2 th:if="${passed}" class="text-success">You have passed the quiz!</h2>
+    <h2 th:if="${!passed}" class="text-danger">You have not passed the quiz!</h2>
+
+    <h4 th:text="'You scored ' + ${score} + '/' + ${quiz.questions.size}">Score</h4>
+    <br><br>
+    <div style="margin-left: 10%; margin-right:10%;">
+        <div style="margin-bottom:50px;" th:each="question: ${quiz.questions}">
+            <div th:utext="${question.question}"></div>
+            <div th:each="option: ${question.questionOptions}">
+                <div class="form-check" style="margin-left:15px;">
+                    <input class="form-check-input disabled" type="radio" th:if="${#sets.contains(answers, option.id)}"
+                           th:name="'quiz-option-' + ${question.id}" th:id="'flexRadioDefault' + ${option.id}" th:value="${option.id}"
+                    checked disabled>
+                    <input class="form-check-input" type="radio" th:if="${!#sets.contains(answers, option.id)}"
+                           th:name="'quiz-option-' + ${question.id}" th:id="'flexRadioDefault' + ${option.id}" th:value="${option.id}" disabled>
+                    <label class="form-check-label" th:for="'flexRadioDefault' + ${option.id}" th:utext="${option.optionText}"></label>
+                    <i class="fa fa-times" th:if="${#sets.contains(answers, option.id) && !option.isRightOption}" style="color:red;" aria-hidden="true"></i>
+                    <i class="fa fa-check"  th:if="${#sets.contains(answers, option.id) && option.isRightOption}" style="color:green;" aria-hidden="true"></i>
+                </div>
+            </div>
+            <br>
+            <div class="alert alert-info" role="alert">
+                <h6>The correct option is</h6>
+                <div th:each="option: ${question.questionOptions}">
+                    <div th:if="${option.isRightOption}" th:utext="${option.optionText}">Correct</div>
+                </div>
+            </div>
+        </div>
+        <a class="btn btn-primary btn-lg" th:href="'/quizzes/' + ${quiz.id}">Finish Evaluation</a>
+    </div>
+</div>
+
+<footer th:replace="fragments/main ::footer"></footer>
+
+</body>
+</html>

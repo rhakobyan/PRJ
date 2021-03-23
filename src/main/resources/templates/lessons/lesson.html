@@ -15,6 +15,8 @@
                 var problem = /*[[${lesson.problem.problemBody}]]*/ 'default';
                 var problemId = /*[[${lesson.problem.id}]]*/ -1;
                 var solutionRequired = /*[[${lesson.problem.solutionRequired}]]*/ false;
+                var startIndex = /*[[${lesson.problem.solutionStartIndex}]]*/ 0;
+                var endLength = /*[[${lesson.problem.solutionEndLength}]]*/ 0;
 
             /*]]>*/
         </script>
@@ -48,13 +50,13 @@
                 <div class="col-md">
                     <div>
                         <a th:if="${prev != null}" class="btn btn-light" style="margin-right: 100px;"
-                           th:href="'/lessons/'+${prev.id}">
+                           th:href="${prev}">
                             <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
                         </a>
                         <a th:if="${prev == null}" class="btn btn-light" style="margin-right: 100px;" disabled>
                             <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
                         </a>
-                        <a th:if="${next != null}" th:href="'/lessons/'+${next.id}" id="nextLesson"
+                        <a th:if="${next != null}" th:href="${next}" id="nextLesson"
                            th:class="${#sets.contains(#authentication.getPrincipal().getUser().completedLessons, lesson)}? 'btn btn-warning' : 'btn btn-light btn-disabled'">
                              Next <i class="fa fa-angle-right" aria-hidden="true"></i>
                         </a>

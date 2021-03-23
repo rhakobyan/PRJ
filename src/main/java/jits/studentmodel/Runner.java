@@ -14,12 +14,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
-public class Runner {
+public class Runner implements Callable<Map<String,String>>{
+    private String code;
+    private long threadId;
 
-    public static Map<String, String> run(String code) {
-        HashMap<String, String> map = new HashMap<>();
+    public Runner(String code) {
+        this.code = code;
+    }
+
+    @Override
+    public Map<String, String> call() {
+       threadId = Thread.currentThread().getId();
+        Map<String, String> map = new HashMap<>();
         StringBuilder message = new StringBuilder();
+        System.out.println("running");
+        System.out.println("is daemon: " + Thread.currentThread().isDaemon());
 
         try {
             FileIO.writeFileForCompilation(code);
@@ -51,6 +62,7 @@ public class Runner {
                 // what is being printed when executing the method
                 System.setOut(printStream);
                 method.invoke(null, (Object) args);  // invoke the method
+
                 //close the stream
                 printStream.flush();
                 printStream.close();
@@ -70,5 +82,9 @@ public class Runner {
 
         map.put("message", message.toString());
         return map;
+    }
+
+    public long getThreadId() {
+        return threadId;
     }
 }

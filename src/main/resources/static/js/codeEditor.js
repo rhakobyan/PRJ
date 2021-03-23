@@ -8,6 +8,28 @@ $(function() {
               theme: 'darcula'
     });
 
+
+    javaCodeMirror.on('beforeChange',function(cm,change) {
+        var readOnlyLines = [];
+        for (var i = 0; i < startIndex; ++i)
+            readOnlyLines.push(i);
+
+        var index = javaCodeMirror.lineCount() - 1;
+        var endL = endLength;
+        while (endL > 0) {
+            readOnlyLines.push(index);
+            --index;
+            --endL;
+        }
+
+        if ( ~readOnlyLines.indexOf(change.from.line) ) {
+            change.cancel();
+        }
+    });
+
+//    javaCodeMirror.markText({line: 0, ch:0}, {line: startIndex, ch:0}, {readOnly: true});
+//    javaCodeMirror.markText({line: javaCodeMirror.lineCount() - 1 - endLength, ch:0}, {line: javaCodeMirror.lineCount(), ch:1}, {readOnly: true});
+
     $("#run").click(function() {
         var codeEditorValue = javaCodeMirror.getValue();
         $.post("/lessons/run",

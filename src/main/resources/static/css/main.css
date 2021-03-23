@@ -71,3 +71,11 @@ main {
     float:right;
     color: green;
 }
+
+pre, code {
+    white-space: pre-line;
+}
+
+pre {
+    padding: 7px;
+}

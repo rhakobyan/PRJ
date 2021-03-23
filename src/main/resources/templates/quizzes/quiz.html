@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/main ::head(title=${quiz.title})">
+</head>
+<body class="d-flex flex-column">
+<nav th:replace="fragments/main ::navbar"></nav>
+<!-- Page Content -->
+<div class="container">
+    <h2 th:text="${quiz.title}">Quiz</h2>
+    <a href='javascript:window.history.back()' type='button'><<<&lt;Back</a>
+    <br><br>
+    <h4 th:if="${#sets.contains(#authentication.getPrincipal().getUser().completedQuizzes, quiz)}"
+    class="text-success">You have already passed this quiz</h4>
+    <a class="btn btn-primary" th:href="'/quizzes/' + ${quiz.id} + '/attempt'"
+    th:text="${#sets.contains(#authentication.getPrincipal().getUser().completedQuizzes, quiz)} ? 'Re-attempt Quiz' : 'Attempt Quiz'">Attempt Quiz</a>
+    <br><br>
+    <a href="/">To Syllabus</a>
+</div>
+
+<footer th:replace="fragments/main ::footer"></footer>
+
+</body>
+</html>
