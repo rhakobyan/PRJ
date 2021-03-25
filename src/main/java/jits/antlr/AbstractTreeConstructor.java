@@ -5,134 +5,163 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
     @Override
     public JavaASTNode visitBlock(JavaParser.BlockContext ctx) {
 //        System.out.println("visiting block");
-//        if (ctx.blockStatement().size() == 1)
-//            return visit(ctx.blockStatement(0));
+        JavaASTNode block = new JavaASTNode("block",ctx.getText());
 
-        JavaASTNode blockNode = new JavaASTNode("block", ctx.getText());
-        for (int i = 0; i < ctx.getChildCount(); ++i) {
-            if (!ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
-                blockNode.addChild(visit(ctx.getChild(i)));
-        }
-        return blockNode;
+        for (int i = 0; i < ctx.blockStatement().size(); ++i)
+            block.addChild(visit(ctx.blockStatement(i)));
+
+        return block;
     }
 
     @Override
     public JavaASTNode visitStatement(JavaParser.StatementContext ctx) {
 //        System.out.println("visiting statement");
-//        System.out.println(ctx.getText());
-//        if (ctx.statement(0) != null)
-//            System.out.println(ctx.statement(0).getText());
-        if ( ctx.statementExpression != null)
-            return visit(ctx.getChild(0));
+        if (ctx.blockLabel != null) {
+            return visit(ctx.blockLabel);
+        }
+        else if (ctx.IF() != null) {
+            JavaASTNode ifStatement = new JavaASTNode("if",ctx.getText());
+            ifStatement.addChild(visit(ctx.parExpression()));
 
-        if(ctx.blockLabel != null || ctx.identifierLabel != null)
-            return visitChildren(ctx);
-
-        JavaASTNode statementNode = new JavaASTNode(ctx.getStart().getText(), ctx.getText());
-        for (int i = 1; i < ctx.getChildCount(); ++i) {
-            if (!ctx.getChild(i).getText().equals("{") &&
-                    !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") &&
-                    !ctx.getChild(i).getText().equals(")") && !ctx.getChild(i).getText().equals(";") &&
-                    (ctx.ELSE() == null || !ctx.getChild(i).getText().equals(ctx.ELSE().getText())) &&
-                    (ctx.WHILE() == null || !ctx.getChild(i).getText().equals(ctx.WHILE().getText()))) {
-                JavaASTNode child = visit(ctx.getChild(i));
-                boolean addedChild = false;
-                for (int j = 0; j < ctx.statement().size(); ++j) {
-                    if (ctx.statement(j).getText().equals(child.getText() + ";") && !child.getName().equals("block")) {
-                        JavaASTNode block = new JavaASTNode("block", child.getText());
-                        block.addChild(child);
-                        statementNode.addChild(block);
-                        addedChild = true;
-                    }
+            if (ctx.statement().size() > 0) {
+                if (ctx.statement(0).blockLabel == null) {
+                    JavaASTNode block = new JavaASTNode("block",ctx.getText());
+                    block.addChild(visit(ctx.statement(0)));
+                    ifStatement.addChild(block);
+                } else {
+                    ifStatement.addChild(visit(ctx.statement(0)));
                 }
-                if (!addedChild)
-                    statementNode.addChild(child);
             }
 
-        }
+            if (ctx.ELSE() != null && ctx.statement().size() > 1) {
+                JavaASTNode elseBlock = new JavaASTNode("else",ctx.getText());
+                if (ctx.statement(1).blockLabel == null) {
+                    JavaASTNode block = new JavaASTNode("block",ctx.getText());
+                    block.addChild(visit(ctx.statement(1)));
+                    elseBlock.addChild(block);
+                    ifStatement.addChild(block);
+                } else {
+                    elseBlock.addChild(visit(ctx.statement(1)));
+                    ifStatement.addChild(elseBlock);
+                }
+            }
 
-        return statementNode;
+            return ifStatement;
+        } else if (ctx.FOR() != null) {
+            JavaASTNode forLoop = new JavaASTNode("for", ctx.getText());
+            forLoop.addChild(visit(ctx.forControl()));
+
+            if (ctx.statement().size() > 0)
+                forLoop.addChild(visit(ctx.statement(0)));
+
+            return forLoop;
+        } else if (ctx.DO() != null) {
+            JavaASTNode doWhileLoop = new JavaASTNode("do-while", ctx.getText());
+            doWhileLoop.addChild(visit(ctx.parExpression()));
+            if (ctx.statement().size() > 0)
+                doWhileLoop.addChild(visitStatement(ctx.statement(0)));
+
+            return doWhileLoop;
+        } else if (ctx.WHILE() != null) {
+            JavaASTNode whileLoop = new JavaASTNode("while", ctx.getText());
+            whileLoop.addChild(visit(ctx.parExpression()));
+            if (ctx.statement().size() > 0)
+                whileLoop.addChild(visitStatement(ctx.statement(0)));
+
+            return whileLoop;
+        } else if (ctx.SWITCH() != null) {
+            JavaASTNode switchStatement = new JavaASTNode("switch", ctx.getText());
+            for (int i = 0; i < ctx.switchBlockStatementGroup().size(); ++i)
+                switchStatement.addChild(visit(ctx.switchBlockStatementGroup(i)));
+
+            for (int i = 0; i < ctx.switchLabel().size(); ++i)
+                switchStatement.addChild(visit(ctx.switchLabel(i)));
+
+            return switchStatement;
+        } else if ( ctx.statementExpression != null)
+            return visit(ctx.getChild(0));
+
+        return new JavaASTNode(ctx.getText(), ctx.getText());
     }
 
-    @Override public JavaASTNode visitParExpression(JavaParser.ParExpressionContext ctx) {
+    @Override
+    public JavaASTNode visitParExpression(JavaParser.ParExpressionContext ctx) {
 //        System.out.println("visiting parExpression");
-        if (ctx.getChildCount() == 0)
+        if (ctx.expression() == null)
             return new JavaASTNode(ctx.getText(), ctx.getText());
-        return visit(ctx.getChild(1));
+
+        return visit(ctx.expression());
     }
 
     @Override
     public JavaASTNode visitExpression(JavaParser.ExpressionContext ctx) {
         System.out.println("visiting expression " + ctx.getText());
 //        System.out.println("visiting expression");
-        if (ctx.getChildCount() == 0)
+        if (ctx.getChildCount() == 0) {
             return new JavaASTNode(ctx.getText(), ctx.getText());
-        String name = "";
-        if (ctx.DOT() != null) {
-            JavaASTNode expressionNode = new JavaASTNode(".", ctx.getText());
-//            System.out.println(ctx.getChildCount());
-            for (int i = 0; i < ctx.getChildCount(); ++i) {
-                if (!ctx.getChild(i).getText().equals(".") && !ctx.getChild(i).getText().equals("==") && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
-                {
-                    if(ctx.IDENTIFIER() != null && ctx.getChild(i).getText().equals(ctx.IDENTIFIER().getText()))
-                        expressionNode.addChild(new JavaASTNode(ctx.IDENTIFIER().getText(), ctx.IDENTIFIER().getText()));
-                    else
-                        expressionNode.addChild(visit(ctx.getChild(i)));
+        } else if (ctx.primary() != null) {
+            return  visit(ctx.primary());
+        } else if (ctx.DOT() != null) {
+            if (ctx.IDENTIFIER() != null || ctx.methodCall() != null) {
+                JavaASTNode booleanOperator = new JavaASTNode(ctx.DOT().getText(), ctx.getText());
+                if (ctx.expression() != null && ctx.expression().size() > 0) {
+                    booleanOperator.addChild(visit(ctx.expression(0)));
                 }
+                if (ctx.IDENTIFIER() != null)
+                    booleanOperator.addChild(new JavaASTNode(ctx.IDENTIFIER().getText(), ctx.IDENTIFIER().getText()));
+                else
+                    booleanOperator.addChild(visit(ctx.methodCall()));
+
+                return booleanOperator;
             }
-
-            return expressionNode;
-        }
-        else if (ctx.NEW() != null)
-            name = "new";
-        else if (ctx.postfix != null) {
-            name = ctx.postfix.getText();
-            JavaASTNode expressionNode = new JavaASTNode("post", ctx.getText());
-            expressionNode.addChild(new JavaASTNode(name, name));
+        } else if (ctx.methodCall() != null) {
+            return visit(ctx.methodCall());
+        } else if (ctx.postfix != null) {
+            JavaASTNode postFix = new JavaASTNode("post", ctx.getText());
+            postFix.addChild(new JavaASTNode(ctx.postfix.getText(), ctx.getText()));
             if (ctx.getChild(0) != null)
-                expressionNode.addChild(visit(ctx.getChild(0)));
+                postFix.addChild(visit(ctx.getChild(0)));
 
-            return expressionNode;
-        }
-        else if (ctx.prefix != null) {
-            name = ctx.prefix.getText();
-            JavaASTNode expressionNode = new JavaASTNode("pre", ctx.getText());
-            expressionNode.addChild(new JavaASTNode(name, name));
+            return postFix;
+
+        } else if (ctx.prefix != null) {
+            JavaASTNode preFix = new JavaASTNode("pre", ctx.getText());
+            preFix.addChild(new JavaASTNode(ctx.prefix.getText(), ctx.getText()));
             if (ctx.getChild(1) != null)
-                expressionNode.addChild(visit(ctx.getChild(1)));
+                preFix.addChild(visit(ctx.getChild(1)));
 
-            return expressionNode;
-        }
-        else if (ctx.bop != null) {
-            if (ctx.getChildCount() == 2)
-                name = ctx.getChild(0).toStringTree();
-            else
-                name = ctx.getChild(1).toStringTree();
-        }
-        if (name.equals(""))
-            return visitChildren(ctx);
-
-        JavaASTNode expressionNode = new JavaASTNode(name, ctx.getText());
-        boolean reverse = false;
-
+            return preFix;
+        } else if (ctx.bop != null) {
+            boolean reverse = false;
+            JavaASTNode booleanOperator;
             if (ctx.bop.getText().equals(">=")) {
-                expressionNode = new JavaASTNode("<=", ctx.getText());
+                booleanOperator = new JavaASTNode("<=", ctx.getText());
                 reverse = true;
             } else if (ctx.bop.getText().equals(">")) {
-                expressionNode = new JavaASTNode("<", ctx.getText());
+                booleanOperator = new JavaASTNode("<", ctx.getText());
                 reverse = true;
+            } else {
+                booleanOperator = new JavaASTNode(ctx.bop.getText(), ctx.getText());
             }
-        System.out.println(reverse);
-        for (int i = 0; i < ctx.getChildCount(); ++i) {
-//            System.out.println(ctx.getText());
-            if (!ctx.getChild(i).getText().equals(ctx.bop.getText()) && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")")) {
+
+            if (ctx.expression().size() > 0 && ctx.expression(0) != null) {
                 if (reverse)
-                    expressionNode.addChild(visit(ctx.getChild(ctx.getChildCount() - i - 1)));
+                    booleanOperator.addChild(visit(ctx.expression(0)));
                 else
-                    expressionNode.addChild(visit(ctx.getChild(i)));
+                    booleanOperator.addChild(visit(ctx.expression(0)));
             }
+
+            if (ctx.expression().size() > 1 && ctx.expression(1) != null) {
+                if (reverse)
+                    booleanOperator.addChild(visit(ctx.expression(1)));
+                else
+                    booleanOperator.addChild(visit(ctx.expression(1)));
+            }
+
+            return booleanOperator;
         }
-        return  expressionNode;
+
+        return new JavaASTNode(ctx.getText(), ctx.getText());
     }
 
     @Override
@@ -142,6 +171,7 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
             return new JavaASTNode(ctx.getText(), ctx.getText());
         if (ctx.LPAREN() != null && ctx.RPAREN() != null && ctx.expression() != null)
             return visit(ctx.expression());
+
         return visitChildren(ctx);
     }
 
@@ -149,7 +179,7 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
     public JavaASTNode visitLiteral(JavaParser.LiteralContext ctx) {
 //        System.out.println("visiting literal");
         if(ctx.integerLiteral() == null && ctx.floatLiteral() == null)
-           return new JavaASTNode(ctx.getText(), ctx.getText());
+            return new JavaASTNode(ctx.getText(), ctx.getText());
 
         return visitChildren(ctx);
     }
@@ -167,56 +197,61 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
     @Override
     public JavaASTNode visitLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
 //        System.out.println("visiting local variable declaration");
-        JavaASTNode localVariableNode = new JavaASTNode("local-var", ctx.getText());
-        for (int i = 0; i < ctx.getChildCount(); ++i) {
-            if (!ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
-                localVariableNode.addChild(visit(ctx.getChild(i)));
-        }
-        return localVariableNode;
+        JavaASTNode localVariable = new JavaASTNode("local-var",ctx.getText());
+
+        localVariable.addChild(visit(ctx.typeType()));
+        localVariable.addChild(visit(ctx.variableDeclarators().variableDeclarator(0)));
+
+        return localVariable;
     }
 
     @Override
     public JavaASTNode visitPrimitiveType(JavaParser.PrimitiveTypeContext ctx) {
 //        System.out.println("visiting primitive");
-        return new JavaASTNode(ctx.getStart().getText(), ctx.getText());
+        JavaASTNode type = new JavaASTNode("primitive-type", ctx.getText());
+        type.addChild(new JavaASTNode(ctx.getText(), ctx.getText()));
+        return type;
     }
 
     @Override
     public JavaASTNode visitClassOrInterfaceType(JavaParser.ClassOrInterfaceTypeContext ctx) {
 //        System.out.println("visiting class");
-        return new JavaASTNode(ctx.getStart().getText(), ctx.getText());
+        JavaASTNode type = new JavaASTNode("class-type", ctx.getText());
+        type.addChild(new JavaASTNode(ctx.getText(), ctx.getText()));
+        return type;
     }
 
     @Override
     public JavaASTNode visitVariableDeclarator(JavaParser.VariableDeclaratorContext ctx) {
 //        System.out.println("visiting variable declaration");
-        if (ctx.ASSIGN() == null) {
-            visitChildren(ctx);
+        JavaASTNode declarator = new JavaASTNode("=", ctx.getText());
+        declarator.addChild(visit(ctx.variableDeclaratorId()));
+
+        if (ctx.ASSIGN() != null && ctx.variableInitializer() != null) {
+            declarator.addChild(visit(ctx.variableInitializer()));
         }
-        JavaASTNode assignNode = new JavaASTNode("=", ctx.getText());
-        for (int i = 0; i < ctx.getChildCount(); ++i) {
-            if (!ctx.getChild(i).getText().equals("=") && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
-                assignNode.addChild(visit(ctx.getChild(i)));
-        }
-        return  assignNode;
+
+        return declarator;
     }
 
     @Override
     public JavaASTNode visitVariableDeclaratorId(JavaParser.VariableDeclaratorIdContext ctx) {
 //        System.out.println("visiting variable declaration id");
-        return new JavaASTNode(ctx.getStart().getText(), ctx.getText());
+        return new JavaASTNode(ctx.getText(), ctx.getText());
     }
 
     @Override
     public JavaASTNode visitMethodCall(JavaParser.MethodCallContext ctx) {
 //        System.out.println("visiting method call");
-        JavaASTNode methodCallNode = new JavaASTNode("method-call", ctx.getText());
+        JavaASTNode methodCall = new JavaASTNode("method-call", ctx.getText());
         JavaASTNode methodCallName = new JavaASTNode(ctx.getStart().getText(), ctx.getText());
-        methodCallNode.addChild(methodCallName);
-        if (ctx.expressionList() != null)
-            methodCallNode.addChild(visit(ctx.expressionList().expression(0)));
-
-        return methodCallNode;
+        methodCall.addChild(methodCallName);
+        if (ctx.expressionList() != null) {
+            for (int i = 0; i < ctx.expressionList().expression().size(); ++i) {
+                methodCall.addChild(visit(ctx.expressionList().expression(i)));
+            }
+        }
+        return methodCall;
     }
 
     @Override
@@ -230,38 +265,55 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
     public JavaASTNode visitBlockStatement(JavaParser.BlockStatementContext ctx) {
         if (ctx.getChildCount() == 0)
             return new JavaASTNode(ctx.getText(), ctx.getText());
+
         return visit(ctx.getChild(0));
     }
 
     @Override
     public JavaASTNode visitForControl(JavaParser.ForControlContext ctx) {
-        System.out.println("Visiting for control");
-        JavaASTNode forControlNode = new JavaASTNode("for-control", ctx.getText());
-        for (int i = 0; i < ctx.getChildCount(); ++i) {
-            if (!ctx.getChild(i).getText().equals(";") && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
-                forControlNode.addChild(visit(ctx.getChild(i)));
+//        System.out.println("Visiting for control");
+        if (ctx.enhancedForControl() != null)
+            return new JavaASTNode(ctx.getText(), ctx.getText());
+
+        JavaASTNode forControl = new JavaASTNode("for-control",ctx.getText());
+        if (ctx.forInit() != null)
+            forControl.addChild(visit(ctx.forInit()));
+
+        if (ctx.expression() != null)
+            forControl.addChild(visit(ctx.expression()));
+
+        if (ctx.forUpdate != null) {
+            forControl.addChild(visit(ctx.forUpdate));
         }
-        return forControlNode;
+        return forControl;
     }
 
     @Override
     public JavaASTNode visitSwitchBlockStatementGroup(JavaParser.SwitchBlockStatementGroupContext ctx) {
-        JavaASTNode switchBlock = new JavaASTNode("switch-block", ctx.getText());
-        for (int i = 0; i < ctx.getChildCount(); ++i) {
-            if (!ctx.getChild(i).getText().equals(";") && !ctx.getChild(i).getText().equals("{") && !ctx.getChild(i).getText().equals("}") && !ctx.getChild(i).getText().equals("(") && !ctx.getChild(i).getText().equals(")"))
-                switchBlock.addChild(visit(ctx.getChild(i)));
-        }
+        JavaASTNode switchBlock = new JavaASTNode("switch-block",ctx.getText());
+
+        for (int i = 0; i < ctx.switchLabel().size(); ++i)
+            switchBlock.addChild(visit(ctx.switchLabel(i)));
+
+        for (int i = 0; i < ctx.blockStatement().size(); ++i)
+            switchBlock.addChild(visit(ctx.blockStatement(i)));
+
         return switchBlock;
     }
 
+    @Override
     public JavaASTNode visitSwitchLabel(JavaParser.SwitchLabelContext ctx) {
         if (ctx.DEFAULT() != null)
-            return new JavaASTNode("switch-default", ctx.getText());
-        else if (ctx.IDENTIFIER() != null)
-            return new JavaASTNode(ctx.IDENTIFIER().getText(), ctx.getText());
-        else if (ctx.constantExpression != null)
-            return visit(ctx.constantExpression);
+            return new JavaASTNode(ctx.DEFAULT().getText(), ctx.getText());
+        else if (ctx.CASE() != null) {
+            JavaASTNode switchLabel = new JavaASTNode(ctx.CASE().getText(), ctx.getText());
 
-        return visitChildren(ctx);
+            if (ctx.IDENTIFIER() != null)
+                return new JavaASTNode(ctx.IDENTIFIER().getText(), ctx.getText());
+            else if (ctx.constantExpression != null)
+                return visit(ctx.constantExpression);
+        }
+
+        return new JavaASTNode(ctx.getText(), ctx.getText());
     }
 }

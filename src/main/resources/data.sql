@@ -360,3 +360,6 @@ INSERT INTO question_option (option_text, is_right_option, question_id) VALUES
     ("<code>10</code>", false, 50),
     ("<code>25</code>", true, 50),
     ("This <code>for</code> loop will not get executed as it produces an error", false, 50);
+
+    INSERT INTO quiz_complete (quiz_id, user_id) VALUES
+        (1, 1);

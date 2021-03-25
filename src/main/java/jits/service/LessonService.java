@@ -30,6 +30,8 @@ public class LessonService {
     private UserRepository userRepository;
     @Autowired
     private LessonRepository lessonRepository;
+    @Autowired
+    FeedbackModule feedbackModule;
 
     public void initialise(Problem problem) throws IOException {
         solutionTracer = new SolutionTracer();
@@ -86,7 +88,7 @@ public class LessonService {
         if (misconceptionTracer.successfulTrace(misconceptionTracer.trace(problem, code)))
             return misconceptionTracer.getMisconception();
 
-        return FeedbackModule.generateFeedback(solutionTracer.trace(problem, code));
+        return feedbackModule.generateFeedback(solutionTracer.trace(problem, code));
     }
 
     public String getSolution (Problem problem, String code) throws IOException{

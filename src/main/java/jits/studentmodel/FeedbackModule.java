@@ -2,30 +2,41 @@ package jits.studentmodel;
 
 import jits.antlr.JavaASTNode;
 import jits.util.Pair;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
 public class FeedbackModule {
-    public static String generateFeedback(Pair<JavaASTNode, JavaASTNode> pair) {
+    @Autowired
+    private KieContainer kieContainer;
+
+    public String generateFeedback(Pair<JavaASTNode, JavaASTNode> pair) {
+        String feedBack = "";
+        KieSession kieSession = kieContainer.newKieSession();
+        kieSession.setGlobal("feedback", feedBack);
+        kieSession.insert(pair.getFirstElement());
+        kieSession.fireAllRules();
+        kieSession.dispose();
+        return kieSession.getGlobal("feedback").toString();
+    }
+   /* public static String generateFeedback(Pair<JavaASTNode, JavaASTNode> pair) {
         StringBuilder stringBuilder = new StringBuilder();
         if (pair == null)
             return "Internal Error";
-
-        if (pair.getFirstElement().getParent() != null && pair.getFirstElement().getParent().getName().equals("if") &&
-                pair.getFirstElement().getParent().getChildren().size() == 3 &&
-                pair.getFirstElement().getParent().getChildren().get(2).getText().equals(pair.getFirstElement().getText()))
-        {
-            stringBuilder.append("In the else branch you need to define ")
-            .append(pair.getFirstElement().getText());
-            return stringBuilder.toString();
-        }
 
         switch (pair.getFirstElement().getName())
         {
             case "if": {
                 stringBuilder.append("You need to write an if statement");
                 break;
+            }
+            case "else": {
+                stringBuilder.append("You need to write the else branch");
             }
             case "for": {
                 stringBuilder.append("You need to write a for loop");
@@ -69,7 +80,7 @@ public class FeedbackModule {
             case "/":
             case "%": {
                 stringBuilder.append("Use the '").append(pair.getFirstElement().getName()).append("' operator")
-                        .append("to write the following statement: ").append(pair.getFirstElement().getText());
+                        .append(" to write the following statement: ").append(pair.getFirstElement().getText());
                 break;
             }
             case ".": {
@@ -89,8 +100,13 @@ public class FeedbackModule {
             }
             case "local-var": {
                 stringBuilder.append("You need to declare a local variable");
-                if (pair.getFirstElement().getChildren().size() > 0)
-                    stringBuilder.append(" of type ").append(pair.getFirstElement().getChildren().get(0).getName());
+                if (pair.getFirstElement().getChildren().size() > 0) {
+                    if (pair.getFirstElement().getChildren().get(0).getName().equals("primitive-type")  && pair.getFirstElement().getChildren().get(0).getChildren().size() > 0) {
+                        stringBuilder.append(" of primitive type ").append(pair.getFirstElement().getChildren().get(0).getChildren().get(0).getName());
+                    } else if (pair.getFirstElement().getChildren().get(0).getName().equals("class-type")  && pair.getFirstElement().getChildren().get(0).getChildren().size() > 0) {
+                        stringBuilder.append(" of class type ").append(pair.getFirstElement().getChildren().get(0).getChildren().get(0).getName());
+                    }
+                }
                 break;
             }
             case "pre":
@@ -160,5 +176,5 @@ public class FeedbackModule {
             return getMostSenior(node.getParent(), value);
 
         return node;
-    }
+    }*/
 }
