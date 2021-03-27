@@ -2,7 +2,6 @@ plugins {
 	id 'org.springframework.boot' version '2.4.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id 'antlr'
 }
 
 group = 'com.example'
@@ -24,8 +23,7 @@ dependencies {
 	implementation 'org.kie:kie-ci:7.49.0.Final'
 	implementation 'org.drools:drools-core:7.49.0.Final'
 	implementation 'org.drools:drools-compiler:7.49.0.Final'
-	implementation 'org.json:json:20210307'
-	antlr 'org.antlr:antlr4:4.9.1'
+	implementation 'org.antlr:antlr4-runtime:4.9.1'
 	runtimeOnly 'mysql:mysql-connector-java'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
