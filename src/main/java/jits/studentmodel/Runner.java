@@ -29,8 +29,6 @@ public class Runner implements Callable<Map<String,String>>{
        threadId = Thread.currentThread().getId();
         Map<String, String> map = new HashMap<>();
         StringBuilder message = new StringBuilder();
-        System.out.println("running");
-        System.out.println("is daemon: " + Thread.currentThread().isDaemon());
 
         try {
             FileIO.writeFileForCompilation(code);

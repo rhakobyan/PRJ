@@ -5,7 +5,6 @@ import jits.antlr.JavaASTNode;
 import jits.antlr.JavaLexer;
 import jits.antlr.JavaParser;
 import jits.model.Problem;
-import jits.util.Pair;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -20,7 +19,7 @@ public abstract class Tracer {
     protected int nodesVisited;
 
     public abstract void initialise(Problem problem) throws IOException;
-    public abstract Pair<JavaASTNode, JavaASTNode> trace(Problem problem, String code);
+    public abstract JavaASTNode trace(Problem problem, String code);
 
     protected JavaASTNode generateAST(String solution) {
         JavaLexer lexer = new JavaLexer(CharStreams.fromString(solution));
@@ -31,13 +30,13 @@ public abstract class Tracer {
         return constructor.visit(tree);
     }
 
-    protected Pair<JavaASTNode, JavaASTNode> compareTrees (JavaASTNode modelSolutionNode, JavaASTNode currentSolutionNode) {
-        System.out.println("Comparing " + modelSolutionNode.getName() + " and " + currentSolutionNode.getName());
+    protected JavaASTNode compareTrees (JavaASTNode modelSolutionNode, JavaASTNode currentSolutionNode) {
+//        System.out.println("Comparing " + modelSolutionNode.getName() + " and " + currentSolutionNode.getName());
         if (!modelSolutionNode.getName().equals(currentSolutionNode.getName())) {
             if (modelSolutionNode.getName().equals("null-node"))
-                return new Pair<>(modelSolutionNode.getParent(), currentSolutionNode);
-            System.out.println("returning here");
-            return new Pair<>(modelSolutionNode, currentSolutionNode);
+                return modelSolutionNode.getParent();
+
+            return modelSolutionNode;
         }
 
         ++nodesVisited;
@@ -48,26 +47,26 @@ public abstract class Tracer {
                 || modelSolutionNode.getName().equals("==") || modelSolutionNode.getName().equals("!=") ||
                 modelSolutionNode.getName().equals("&&") || modelSolutionNode.getName().equals("||"))
                 && modelSolutionChildren.size() == 2 && currentSolutionChildren.size() == 2) {
-            Pair<JavaASTNode, JavaASTNode> firstCompare =
+            JavaASTNode firstCompare =
                     compareTrees(modelSolutionChildren.get(0), currentSolutionChildren.get(0));
-            Pair<JavaASTNode, JavaASTNode> secondCompare =
+            JavaASTNode secondCompare =
                     compareTrees(modelSolutionChildren.get(1), currentSolutionChildren.get(1));
 
-            Pair<JavaASTNode, JavaASTNode> altFirstCompare =
+            JavaASTNode altFirstCompare =
                     compareTrees(modelSolutionChildren.get(0), currentSolutionChildren.get(1));
-            Pair<JavaASTNode, JavaASTNode> altSecondCompare =
+            JavaASTNode altSecondCompare =
                     compareTrees(modelSolutionChildren.get(1), currentSolutionChildren.get(0));
 
-            if ((firstCompare.getFirstElement().getName().equals("success-node") &&
-                    secondCompare.getFirstElement().getName().equals("success-node")) ||
-                    (altFirstCompare.getFirstElement().getName().equals("success-node") &&
-                            altSecondCompare.getFirstElement().getName().equals("success-node")))
-                return new Pair<>(new JavaASTNode("success-node", ""), new JavaASTNode("success-node", ""));
-            else if (!firstCompare.getFirstElement().getName().equals("success-node"))
+            if ((firstCompare.getName().equals("success-node") &&
+                    secondCompare.getName().equals("success-node")) ||
+                    (altFirstCompare.getName().equals("success-node") &&
+                            altSecondCompare.getName().equals("success-node")))
+                return new JavaASTNode("success-node", "");
+            else if (!firstCompare.getName().equals("success-node"))
                 return firstCompare;
-            else if (!secondCompare.getFirstElement().getName().equals("success-node"))
+            else if (!secondCompare.getName().equals("success-node"))
                 return secondCompare;
-            else if (!altFirstCompare.getFirstElement().getName().equals("success-node"))
+            else if (!altFirstCompare.getName().equals("success-node"))
                 return altFirstCompare;
             else
                 return altSecondCompare;
@@ -75,27 +74,25 @@ public abstract class Tracer {
 
         for (int i = 0; i < modelSolutionChildren.size(); ++i) {
             if (i >= currentSolutionChildren.size()) {
-                return new Pair<>(modelSolutionChildren.get(i), currentSolutionNode);
+                return modelSolutionChildren.get(i);
             }
 
-            Pair<JavaASTNode, JavaASTNode> comparisonOutcome =
+            JavaASTNode comparisonOutcome =
                     compareTrees(modelSolutionChildren.get(i), currentSolutionChildren.get(i));
-            if (!comparisonOutcome.getFirstElement().getName().equals("success-node"))
+            if (!comparisonOutcome.getName().equals("success-node"))
                 return comparisonOutcome;
         }
         if (currentSolutionChildren.size() > modelSolutionChildren.size())
-            return new Pair<>(new JavaASTNode("extra-node", ""), currentSolutionNode);
+            return new JavaASTNode("extra-node", "");
 
-        JavaASTNode success = new JavaASTNode("success-node", "");
-        return new Pair<>(success, success);
+        return new JavaASTNode("success-node", "");
     }
 
     protected String addParentheses(String code) {
         return "{ " + code + " }";
     }
+
     protected String normalise(Problem problem, String code) {
-        System.out.println(problem.getSolutionStartIndex());
-        System.out.println(problem.getSolutionEndLength());
         String[] lines = code.split(System.getProperty("line.separator"));
         StringJoiner joiner = new StringJoiner("");
         joiner.add("{");
@@ -119,5 +116,9 @@ public abstract class Tracer {
         }
 
         return false;
+    }
+
+    public boolean successfulTrace(JavaASTNode node) {
+        return node.getName().equals("success-node");
     }
 }

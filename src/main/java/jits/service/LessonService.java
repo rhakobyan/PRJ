@@ -1,6 +1,5 @@
 package jits.service;
 
-import jits.antlr.JavaASTNode;
 import jits.model.Problem;
 import jits.model.User;
 import jits.repository.LessonRepository;
@@ -59,7 +58,6 @@ public class LessonService {
                 compilation.put("solved", "true");
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 User student = ((JITSUserDetails) auth.getPrincipal()).getUser();
-                System.out.println(problem.getLesson().getId());
                 student.addCompletedLesson(problem.getLesson());
                 problem.getLesson().addStudentsCompleted(student);
                 lessonRepository.save(problem.getLesson());
@@ -85,10 +83,17 @@ public class LessonService {
     }
 
     public String getHint(Problem problem, String code) {
-        if (misconceptionTracer.successfulTrace(misconceptionTracer.trace(problem, code)))
-            return misconceptionTracer.getMisconception();
+        try {
+            if (!problem.isSolutionRequired())
+                return "Try running your code!";
 
-        return feedbackModule.generateFeedback(solutionTracer.trace(problem, code));
+            if (misconceptionTracer.successfulTrace(misconceptionTracer.trace(problem, code)))
+                return misconceptionTracer.getMisconception();
+
+            return feedbackModule.generateFeedback(solutionTracer.trace(problem, code));
+        } catch (NullPointerException ex) {
+            return "<p class='text-danger'>Internal Server Error</p>";
+        }
     }
 
     public String getSolution (Problem problem, String code) throws IOException{

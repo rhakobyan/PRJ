@@ -1,0 +1,298 @@
+import jits.antlr.JavaASTNode;
+import jits.util.Helpers;
+
+global String feedback;
+global Boolean noNext;
+dialect "mvel";
+
+rule "null"
+when
+    not JavaASTNode()
+then
+    feedBack = "<p class='text-danger'>Internal Server Error</p>";
+end
+
+rule "If"
+when
+   $node: JavaASTNode(name == "if")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write an <code>if</code> statement");
+end
+
+rule "else"
+when
+   $node: JavaASTNode(name == "else")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write the <code>else</code> branch");
+end
+
+rule "for"
+when
+   $node: JavaASTNode(name == "for")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write a <code>for</code> loop");
+end
+
+rule "for-control"
+when
+   $node: JavaASTNode(name == "for-control")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "Define the for loop by constructing the following statements: <code>" + $node.text + "</code>");
+end
+
+rule "while"
+when
+   $node: JavaASTNode(name == "while")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write a <code>while</code> loop");
+end
+
+rule "do-while"
+when
+   $node: JavaASTNode(name == "do-while")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write a <code>do-while</code> loop");
+end
+
+rule "switch"
+when
+   $node: JavaASTNode(name == "switch")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write a <code>switch</code> statement");
+end
+
+rule "comparison"
+when
+   $node: JavaASTNode($name: name)
+   eval($name == "==" || $name == "!=" || $name == ">" || $name == "<" || $name == ">=" || $name == "<=")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "you need to use a <u>comparison</u> operator to check for the following statement: <code>" + $node.getText() + "</code>");
+end
+
+rule "logical"
+when
+    $node: JavaASTNode($name: name)
+    eval($name == "&&" || $name == "!" || $name == "||")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to use the <code>" + $node.name + "</code> logical operator to check for the following statement: <code>" + $node.text + "</code>");
+end
+
+rule "arithmetic"
+when
+    $node: JavaASTNode($name: name)
+    eval($name == "+" || $name == "-" || $name == "*" || $name == "/" || $name == "%")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to use the <code>" + $node.name + "</code> arithmetic operator to write the following statement: <code>" + $node.text + "</code>");
+end
+
+rule "separator"
+when
+    $node: JavaASTNode(name == ".")
+then
+    JavaASTNode seniorDot = Helpers.getMostSenior($node, ".");
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write the following statement: <code>" + seniorDot.getText() + "</code>");
+end
+
+rule "assignment"
+when
+    $node: JavaASTNode($name: name)
+    eval($name == "=" || $name == "-=" || $name == "*=" || $name == "/=" || $name == "+=")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to use the assignment operator <code>" + $node.name + "</code> to define the following statement: <code>" + $node.text + "</code>");
+end
+
+rule "local-var-primitive"
+when
+   $node: JavaASTNode(name == "local-var", children.size() > 0, children.get(0).name == "primitive-type")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to declare a local variable of primitive type <code>" + $node.getChildren().get(0).getChildren().get(0).getName() + "</code>");
+end
+
+rule "local-var-class"
+when
+   $node: JavaASTNode(name == "local-var", children.size() > 0, children.get(0).name == "class-type")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to declare a local variable of class type <code>" + $node.getChildren().get(0).getChildren().get(0).getName() + "</code>");
+end
+
+rule "local-var"
+when
+   $node: JavaASTNode(name == "local-var",  children.size() <= 0)
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to declare a local variable");
+end
+
+rule "pre-post-alone"
+when
+    $node: JavaASTNode($name: name)
+    eval($name == "pre" || $name == "post")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to use a " + $node.name + "-fixed operator <code>");
+end
+
+rule "pre-post"
+when
+    $node: JavaASTNode($name: name, children.size() == 2)
+    eval($name == "pre" || $name == "post")
+then
+   drools.getKnowledgeRuntime().setGlobal("feedback", "You need to use the " + $node.name + "-fixed operator <code>" + $node.children.get(0).name + "</code> on the variable <code>" + $node.children.get(1).getName() + "</code>");
+end
+
+rule "success"
+when
+    $node: JavaASTNode(name == "success-node")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Try running your code!");
+end
+
+rule "method-call-alone"
+when
+    $node: JavaASTNode(name == "method-call")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to call a method");
+end
+
+rule "method-call-children"
+when
+    $node: JavaASTNode(name == "method-call", children.size() > 0)
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to call the method <code>" + $node.getChildren().get(0).getName() + "</code>");        
+end
+
+rule "extra"
+when
+    $node: JavaASTNode(name == "extra-node")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Your code contains statements that are not necessary for the completion of this exercise");
+end
+
+rule "switch-block"
+when
+    $node: JavaASTNode(name == "switch-block")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Define the condition in the <code>switch</code> statement");
+end
+
+rule "method-call-name"
+when
+    $node: JavaASTNode($nodeParent : parent)
+    eval ($nodeParent != null && $nodeParent.name == "method-call" && $nodeParent.children.get(0).name == $node.name)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "You should call the method <code>" + $node.name + "</code>");
+end
+
+rule "not-null-empty"
+when
+    $node: JavaASTNode()
+    eval(feedback == "")
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "specify <code>" + $node.name + "</code>");
+     drools.getKnowledgeRuntime().setGlobal("noNext", Boolean.TRUE);
+end
+
+rule "parent-if-while-condition"
+when
+    $node: JavaASTNode($parent: parent)
+    eval($parent != null && ($parent.name == "if" || $parent.name == "while") && $parent.children.get(0) != null && $parent.children.get(0).name == $node.name)
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Inside the <code>" + $parent.name + "</code> <u>condition</u>, " + Helpers.deCapitalise(feedback));
+end
+
+rule "parent-if-statement"
+when
+    $node: JavaASTNode($parent: parent)
+    eval($parent != null && $parent.name == "block" && $parent.parent != null && $parent.parent.name == "if")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Inside the <code>" +  $parent.parent.name + "</code> <u>statement</u>, " + Helpers.deCapitalise(feedback));
+end
+
+rule "parent-loop-statement"
+when
+    $node: JavaASTNode($parent: parent)
+    eval($parent != null && $parent.name == "block" && $parent.parent != null && ($parent.parent.name == "while" || $parent.parent.name == "for"))
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Inside the body of the <code>" +  $parent.parent.name + "</code> loop, " + Helpers.deCapitalise(feedback));
+end
+
+rule "parent-do-while-condition"
+when
+    $node: JavaASTNode($parent: parent)
+    eval($parent != null && $parent.name == "do-while" && $parent.children.size() > 0 && $parent.children.get(1) != null && $parent.children.get(1).name == $node.name)
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Inside the <code>do-while</code> <u>condition</u>, " + Helpers.deCapitalise(feedback));
+end
+
+rule "parent-do-while-statement"
+when
+    $node: JavaASTNode($parent: parent)
+    eval($parent != null && $parent.name == "block" && $parent.parent != null && $parent.parent.name == "do-while")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Inside the body of the <code>do-while</code> loop, " + Helpers.deCapitalise(feedback));
+end
+
+rule "parent-else-statement"
+when
+    $node: JavaASTNode($parent: parent)
+    eval($parent != null && $parent.name == "block" && $parent.parent != null && $parent.parent.name == "else")
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "Inside the <code>else</code> branch, " + Helpers.deCapitalise(feedback));
+end
+
+
+rule "not-null-first"
+when
+    $node: JavaASTNode($parent: parent)
+    eval ($parent != null && $parent.name == "block" && $parent.parent == null && $parent.children.get(0).text == $node.text)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "First, " + Helpers.deCapitalise(feedback));
+     drools.getKnowledgeRuntime().setGlobal("noNext", Boolean.TRUE);
+end
+
+rule "not-null-next"
+when
+    $node: JavaASTNode()
+    eval(noNext.booleanValue() == false)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "Next, " + Helpers.deCapitalise(feedback));
+end
+
+rule "assignment-type"
+when
+    $node: JavaASTNode($nodeParent : parent)
+    eval ($nodeParent != null && ($nodeParent.name == "primitive-type" || $nodeParent.name == "class-type") && $nodeParent.children.get(0).name == $node.name)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "Your variable should be of type <code>" + $node.name + "</code>");
+end
+
+rule "assignment-type-child"
+when
+    $node: JavaASTNode($name: name)
+    eval (($name == "primitive-type" || $name == "class-type") && $node.children.size() > 0)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "Your variable should be of type <code>" + $node.children.get(0).name + "</code>");
+end
+
+rule "assignment-equate"
+when
+    $node: JavaASTNode($nodeParent : parent)
+    eval ($nodeParent != null && $nodeParent.name == "=" && $nodeParent.children.get(1).name == $node.name)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "You should equate your variable <code>" + $nodeParent.children.get(0).name + "</code> to <code>" + $node.text + "</code>");
+end
+
+
+rule "assignment-name"
+when
+    $node: JavaASTNode($nodeParent : parent)
+    eval ($nodeParent != null && $nodeParent.name == "=" && $nodeParent.children.get(0).name == $node.name)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "You should name your variable <code>" + $node.name + "</code>");
+end
+
+rule "method-call-argument"
+when
+    $node: JavaASTNode($nodeParent : parent)
+    eval ($nodeParent != null && $nodeParent.name == "method-call" && $nodeParent.children.get(1).name == $node.name)
+then
+     drools.getKnowledgeRuntime().setGlobal("feedback", "You should call the method with the argument <code>" + $node.name + "</code>");
+end

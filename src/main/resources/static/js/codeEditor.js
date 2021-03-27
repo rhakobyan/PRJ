@@ -73,7 +73,7 @@ $(function() {
             ++stuckCounter;
             $("#modal").modal("show");
             $("#modalTitle").html("Hint");
-            $("#modalParagraph").html(result);
+            $("#modalParagraph").html(result.replaceAll("&", "&#38;"));
         });
 
         showSolution();
