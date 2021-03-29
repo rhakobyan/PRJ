@@ -1,5 +1,5 @@
-import jits.antlr.JavaASTNode;
-import jits.util.Helpers;
+import prj.antlr.JavaASTNode;
+import prj.util.Helpers;
 
 global String feedback;
 global Boolean noNext;

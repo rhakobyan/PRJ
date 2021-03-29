@@ -364,4 +364,5 @@ INSERT INTO question_option (option_text, is_right_option, question_id) VALUES
     INSERT INTO quiz_complete (quiz_id, user_id) VALUES
         (1, 1),
         (2, 1),
-        (3, 1);
+        (3, 1),
+        (4, 1);
