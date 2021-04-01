@@ -6,7 +6,7 @@ import prj.repository.LessonRepository;
 import prj.repository.UserRepository;
 import prj.studentmodel.FeedbackModule;
 import prj.studentmodel.MisconceptionTracer;
-import prj.Runner.Runner;
+import prj.runner.Runner;
 import prj.studentmodel.SolutionTracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

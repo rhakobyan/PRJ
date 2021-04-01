@@ -1,6 +1,6 @@
 package prj.studentmodel;
 
-import prj.antlr.JavaASTNode;
+import prj.ast.JavaASTNode;
 import prj.model.Problem;
 import prj.model.Solution;
 import prj.util.FileIO;

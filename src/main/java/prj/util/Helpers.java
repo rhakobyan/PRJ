@@ -1,6 +1,6 @@
 package prj.util;
 
-import prj.antlr.JavaASTNode;
+import prj.ast.JavaASTNode;
 
 import java.util.Locale;
 

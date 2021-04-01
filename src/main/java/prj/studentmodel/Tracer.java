@@ -1,7 +1,7 @@
 package prj.studentmodel;
 
-import prj.antlr.AbstractTreeConstructor;
-import prj.antlr.JavaASTNode;
+import prj.ast.AbstractTreeConstructor;
+import prj.ast.JavaASTNode;
 import prj.antlr.JavaLexer;
 import prj.antlr.JavaParser;
 import prj.model.Problem;

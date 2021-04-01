@@ -1,4 +1,4 @@
-package prj.antlr;
+package prj.ast;
 
 import java.util.ArrayList;
 import java.util.List;

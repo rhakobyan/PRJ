@@ -1,6 +1,6 @@
 package prj.studentmodel;
 
-import prj.antlr.JavaASTNode;
+import prj.ast.JavaASTNode;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;

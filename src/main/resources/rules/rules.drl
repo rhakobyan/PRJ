@@ -1,4 +1,4 @@
-import prj.antlr.JavaASTNode;
+import prj.ast.JavaASTNode;
 import prj.util.Helpers;
 
 global String feedback;

@@ -1,7 +1,9 @@
-package prj.antlr;
+package prj.ast;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Interval;
+import prj.antlr.JavaParser;
+import prj.antlr.JavaParserBaseVisitor;
 
 public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> {
 

@@ -1,4 +1,4 @@
-package prj.Runner;
+package prj.runner;
 
 import prj.util.FileIO;
 

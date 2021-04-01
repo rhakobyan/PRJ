@@ -1,6 +1,6 @@
 package prj.studentmodel;
 
-import prj.antlr.JavaASTNode;
+import prj.ast.JavaASTNode;
 import prj.model.Misconception;
 import prj.model.Problem;
 
