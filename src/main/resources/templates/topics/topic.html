@@ -26,7 +26,7 @@
                         <br>
                         <div style="text-align: center;">
                             <div style="display: inline-block; margin-right: 5px;"><i class="fa fa-book" aria-hidden="true"></i><span th:text="' ' + ${topic.lessons.size()} + ' lessons'">Lessons</span></div>
-                            <div style="display: inline-block;"><i class="fa fa-clock-o" aria-hidden="true"></i><span> 1h 30m</span></div>
+                            <div th:if="${topic.quiz != null}" style="display: inline-block;"><i class="fa fa-question-circle" aria-hidden="true"></i><span> Quiz</span></div>
                         </div>
                     </div>
                     <div class="col-md-8">
