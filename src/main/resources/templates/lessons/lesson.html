@@ -9,6 +9,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/javascript/javascript.min.js" integrity="sha512-+tn2IYnLwD2J9p6Nrn/Dl7ag9lluHA0GAblT/vnMiJV8DU/iDsldgf+9XbEqZUee2ThyDtfmSDb+IDZ9u7jrSA==" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/clike/clike.min.js" integrity="sha512-PeD3V/6m5bFv3qyIVKgDh+huybMHjvsLWuW7ZH5WZsS+hY0pZNU24si/Yja/2D4c/ff++c6k1S240dKwhJEJzw==" crossorigin="anonymous"></script>
         <script src="/js/codeEditor.js" type="text/javascript"></script>
+        <script src="/js/sidebar.js" type="text/javascript"></script>
         <script th:inline="javascript">
             /*<![CDATA[*/
 
@@ -26,6 +27,38 @@
         <nav th:replace="fragments/main ::navbar"></nav>
 
         <div class="container-fluid">
+            <nav id="sidebar" class="bg-dark">
+                <div class="close" id="closeSidebar">
+                    <span aria-hidden="true">&times;</span>
+                </div>
+
+                <div class="sidebar-header">
+                    <h3 th:text="${lesson.topic.title}">Bootstrap Sidebar</h3>
+                </div>
+                <div style="padding: 30px;">
+                    <h5>Lessons</h5>
+                    <ul th:each="lesson: ${lesson.topic.lessons}" class="list-unstyled" style="margin-left: 5px;">
+                        <li>
+                            <div style="vertical-alignment: center;" th:switch="${#authentication.getPrincipal().getUser().getCompletedLessons().contains(lesson) || latestInComplete.equals(lesson)}">
+                                <i class="fa fa-code fa-lg fa-title-description"></i>
+                                <a class="h6" style="color:white;" th:case="${true}" th:href="'/lessons/' + ${lesson.id}" th:text="${lesson.title}">Lesson</a>
+                                <a class="h6" style="color:white;" th:case="${false}" href="#" th:text="${lesson.title}" disabled>Lesson</a>
+                                <i th:each="user : ${lesson.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
+                            </div>
+                        </li>
+                    </ul>
+                    <h5  th:if="${lesson.topic.quiz != null}">Quiz</h5>
+                    <div th:if="${lesson.topic.quiz != null}" style="margin-left: 5px;">
+                        <div th:switch="${(#authentication.getPrincipal().getUser().getCompletedQuizzes().contains(lesson.topic.quiz) || latestInCompleteQuiz.equals(lesson.topic.quiz)) && (latestInComplete == null || latestInComplete.getId() > lesson.topic.getLessons().get(lesson.topic.getLessons.size() - 1).getId())}">
+                            <i class="fa fa-question-circle-o fa-lg fa-title-description" aria-hidden="true"></i>
+                            <a th:case="${true}" class="h6" style="color:white;" th:href="'/quizzes/' + ${lesson.topic.quiz.id}" th:text="${lesson.topic.quiz.title}">Quiz</a>
+                            <a th:case="${false}" class="h6" style="color:white;" href="#" th:text="${lesson.topic.quiz.title}" disabled>Quiz</a>
+                            <i th:each="user : ${lesson.topic.quiz.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
             <div class="row lesson">
                 <div class="col-md-5" style="padding:10px; height:100%; overflow-y: auto;">
                     <h3>
@@ -41,7 +74,7 @@
             </div>
             <div class="row bg-secondary bottom-panel">
                 <div class="col-md">
-                    <button class="btn">
+                    <button id="sidebarCollapse" class="btn">
                     <i class="fa fa-bars fa-lg" aria-hidden="true" style="font-size:30px;"></i>
                     </button>
                     <span th:text="${lesson.id}+'.'">Id</span>
@@ -97,5 +130,7 @@
                 </div>
             </div>
         </div>
+
+        <div class="overlay"></div>
     </body>
 </html>

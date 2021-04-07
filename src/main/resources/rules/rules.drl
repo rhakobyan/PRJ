@@ -66,7 +66,7 @@ when
    $node: JavaASTNode($name: name)
    eval($name == "==" || $name == "!=" || $name == ">" || $name == "<" || $name == ">=" || $name == "<=")
 then
-   drools.getKnowledgeRuntime().setGlobal("feedback", "you need to use a <u>comparison</u> operator to check for the following statement: <code>" + $node.getText() + "</code>");
+   drools.getKnowledgeRuntime().setGlobal("feedback", "you need to use a <u>comparison</u> operator to check if <code>" + $node.children.get(0).getText() + "</code> is " + Helpers.getComparisonName($node.name) + " <code>" +  $node.children.get(1).getText() + "</code>");
 end
 
 rule "logical"
@@ -90,7 +90,16 @@ when
     $node: JavaASTNode(name == ".")
 then
     JavaASTNode seniorDot = Helpers.getMostSenior($node, ".");
+    insert(seniorDot);
     drools.getKnowledgeRuntime().setGlobal("feedback", "You need to write the following statement: <code>" + seniorDot.getText() + "</code>");
+end
+
+rule "separator-print"
+when
+    $node: JavaASTNode(children.size() > 1, $methodCall: children.get(1), text matches "System\\.out\\.println\\(.*\\)")
+    eval($methodCall.getName() == "method-call" && $methodCall.getChildren.size() > 1)
+then
+    drools.getKnowledgeRuntime().setGlobal("feedback", "You need to print out <code>" + $methodCall.getChildren().get(1).getText() + "</code>");
 end
 
 rule "assignment"
@@ -280,7 +289,6 @@ then
      drools.getKnowledgeRuntime().setGlobal("feedback", "You should equate your variable <code>" + $nodeParent.children.get(0).name + "</code> to <code>" + $node.text + "</code>");
 end
 
-
 rule "assignment-name"
 when
     $node: JavaASTNode($nodeParent : parent)
@@ -294,5 +302,5 @@ when
     $node: JavaASTNode($nodeParent : parent)
     eval ($nodeParent != null && $nodeParent.name == "method-call" && $nodeParent.children.get(1).name == $node.name)
 then
-     drools.getKnowledgeRuntime().setGlobal("feedback", "You should call the method with the argument <code>" + $node.name + "</code>");
+     drools.getKnowledgeRuntime().setGlobal("feedback", "You should call the method with the argument <code>" + $node.text + "</code>");
 end

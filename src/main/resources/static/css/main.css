@@ -9,6 +9,9 @@ body {
 main {
     padding-bottom: 10px;
 }
+.top-navbar {
+    z-index: 997;
+}
 
 footer {
     flex-grow: 0;
@@ -21,10 +24,19 @@ main {
     flex-grow: 1;
 }
 
-.topicContainer {
-    margin-left:15%;
-    margin-right:15%;
+.topic-container {
     margin-bottom:50px;
+    background-color: white;
+    height:300px;
+    border-radius: 25px;
+}
+
+.topic-container-right {
+    text-align: right;
+}
+
+.topic-container-right h4 {
+    float: right;
 }
 
 .topics {
@@ -58,7 +70,7 @@ main {
     color: black;
 }
 
-.lessonTitle:hover{
+.lessonTitle:hover {
     color: black;
 }
 
@@ -67,15 +79,21 @@ main {
     min-height: 100%;
 }
 
-.fa-check-circle {
-    float:right;
-    color: green;
-}
-
 pre, code {
     white-space: pre-line;
 }
 
 pre {
     padding: 7px;
+}
+
+.image-container {
+    border-radius: 25px;
+    background-size: cover !important;
+}
+
+a[disabled], .btn-disabled {
+    opacity: 0.4;
+    cursor: default !important;
+    pointer-events: none;
 }

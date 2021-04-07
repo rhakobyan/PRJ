@@ -149,11 +149,11 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
         } else if (ctx.bop != null) {
             boolean reverse = false;
             JavaASTNode booleanOperator;
-            if (ctx.bop.getText().equals(">=")) {
-                booleanOperator = new JavaASTNode("<=", getText(ctx));
+            if (ctx.bop.getText().equals("<=")) {
+                booleanOperator = new JavaASTNode(">=", getText(ctx));
                 reverse = true;
-            } else if (ctx.bop.getText().equals(">")) {
-                booleanOperator = new JavaASTNode("<", getText(ctx));
+            } else if (ctx.bop.getText().equals("<")) {
+                booleanOperator = new JavaASTNode(">", getText(ctx));
                 reverse = true;
             } else {
                 booleanOperator = new JavaASTNode(ctx.bop.getText(), getText(ctx));

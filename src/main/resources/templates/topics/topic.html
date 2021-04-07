@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/main ::head(title=${topic.title})"></head>
+    <head>
+        <link rel="stylesheet" href="/css/topic.css">
+        <script src="/js/progressBar.js" type="text/javascript"></script>
+    </head>
+    <body class="d-flex flex-column">
+        <nav th:replace="fragments/main ::navbar"></nav>
+        <!-- Page Content -->
+        <div class="container">
+            <div class="alert alert-info" role="alert">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="progress mx-auto" th:attr="data-value=${completedPercentage}">
+                            <span class="progress-left">
+                                <span class="progress-bar border-primary"></span>
+                            </span>
+                            <span class="progress-right">
+                                <span class="progress-bar border-primary"></span>
+                            </span>
+                            <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                <h2 th:text="${completedPercentage} + '%'">0%</h2>
+                            </div>
+                        </div>
+                        <br>
+                        <div style="text-align: center;">
+                            <div style="display: inline-block; margin-right: 5px;"><i class="fa fa-book" aria-hidden="true"></i><span th:text="' ' + ${topic.lessons.size()} + ' lessons'">Lessons</span></div>
+                            <div style="display: inline-block;"><i class="fa fa-clock-o" aria-hidden="true"></i><span> 1h 30m</span></div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h2 th:text="${topic.title}">Title</h2>
+                        <hr>
+                        <p th:text="${topic.description}">Description</p>
+                    </div>
+                </div>
+            </div>
+            <div class="topic-items-container">
+                <div th:if="${latestInComplete != null && ((topic.getLessons().size() > 0 && latestInComplete.getId() < topic.getLessons().get(0).getId()) || (topic.getQuiz() != null && latestInCompleteQuiz.getId() != topic.getQuiz().getId()))}" class="alert alert-danger">
+                    You need to complete the previous section before moving on to this one!
+                </div>
+                <h4>Lessons</h4>
+                <div th:each="lesson: ${topic.lessons}" class="alert alert-secondary">
+                    <i class="fa fa-code fa-lg fa-title-description"></i>
+                    <div th:switch="${#authentication.getPrincipal().getUser().getCompletedLessons().contains(lesson) || latestInComplete.equals(lesson)}">
+                        <a th:case="${true}" class="lessonTitle" th:href="'/lessons/' + ${lesson.id}" th:text="${lesson.title}">Lesson</a>
+                        <a th:case="${false}" class="lessonTitle" href="#" th:text="${lesson.title}" disabled>Lesson</a>
+                    </div>
+                    <i th:each="user : ${lesson.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
+                </div>
+                <h4  th:if="${topic.quiz != null}">Quiz</h4>
+                <div th:if="${topic.quiz != null}" class="alert alert-secondary">
+                    <i class="fa fa-question-circle-o fa-lg fa-title-description" aria-hidden="true"></i>
+                    <div th:switch="${(#authentication.getPrincipal().getUser().getCompletedQuizzes().contains(topic.quiz) || latestInCompleteQuiz.equals(topic.quiz)) && (latestInComplete == null || latestInComplete.getId() > topic.getLessons().get(topic.getLessons.size() - 1).getId())}">
+                        <a th:case="${true}" class="lessonTitle" th:href="'/quizzes/' + ${topic.quiz.id}" th:text="${topic.quiz.title}">Quiz</a>
+                        <a th:case="${false}" class="lessonTitle" href="#" th:text="${topic.quiz.title}" disabled>Quiz</a>
+                    </div>
+                    <i th:each="user : ${topic.quiz.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    <!-- /.container -->
+    <footer th:replace="fragments/main ::footer"></footer>
+
+    </body>
+</html>

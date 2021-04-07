@@ -44,7 +44,7 @@ $(function() {
                span = "<span class='text-danger' style='white-space: pre-wrap;'>" + result.message + "</span>";
             }
             else if (result.type == "success") {
-                span = "<div>"
+               span = "<div>";
                span += "<span class='text-light' style='white-space: pre-wrap;'>" +result.message + "</span>";
                if (result.solved == "true") {
                    $("#nextLesson").removeClass("btn-disabled btn-light");

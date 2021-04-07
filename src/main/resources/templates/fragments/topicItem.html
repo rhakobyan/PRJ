@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html lang="en">
+    <div th:fragment="description" class="col-md-8" style="padding:30px;">
+        <h4 class="topicTitle" th:text="${topic.title}">Title</h4>
+        <br><br>
+        <p th:text="${topic.description}">Description</p>
+        <div>
+            <div style="display: inline-block; margin-right: 5px;"><i class="fa fa-book" aria-hidden="true"></i><span th:text="' ' + ${topic.lessons.size()} + ' lessons'">Lessons</span></div>
+            <div style="display: inline-block;"><i class="fa fa-clock-o" aria-hidden="true"></i><span> 1h 30m</span></div>
+        </div>
+        <div style="margin-top:15px;">
+            <a th:href="'/topics/' + ${topic.id}" class="btn btn-outline-info">Enter Topic</a>
+        </div>
+    </div>
+    <div th:fragment="image" class="col-md-4 image-container" th:style="'background:url(' + @{'images/' + ${topic.image}} + ');'">
+    </div>
+</html>

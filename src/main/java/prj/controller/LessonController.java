@@ -1,10 +1,10 @@
 package prj.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import prj.model.*;
 import prj.repository.LessonRepository;
 
-import prj.repository.QuizRepository;
-import prj.repository.TopicRepository;
 import prj.repository.UserRepository;
 import prj.service.AppUserDetails;
 import prj.service.LessonService;
@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import prj.service.LessonsProgressService;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,88 +26,25 @@ public class LessonController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    TopicRepository topicRepository;
-    @Autowired
-    QuizRepository quizRepository;
-    @Autowired
     private LessonService lessonService;
+    @Autowired
+    private LessonsProgressService lessonsProgressService;
 
-
-//    @GetMapping("/lessons/{lessonId}")
-//    public String lesson(@PathVariable long lessonId, Model model) {
-//        Lesson lesson = lessonRepository.findById(lessonId);
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        User student = ((JITSUserDetails) auth.getPrincipal()).getUser();
-//        Set<Lesson> completedLessons = student.getCompletedLessons();
-//
-//        if (!completedLessons.contains(student)) {
-//            Topic previousTopic = topicRepository.findById(lesson.getTopic().getId() - 1);
-//            if (previousTopic != null) {
-//                List<Lesson> topicLessons = completedLessons.stream().filter(l -> l.getTopic().getId() == previousTopic.getId()).collect(Collectors.toList());
-//                Optional<Lesson> previousLatestComplete = topicLessons.stream().max(Comparator.comparing(Lesson::getId));
-//                Quiz previousQuiz = previousTopic.getQuiz();
-//                Lesson latestInComplete;
-//                if (previousLatestComplete.isPresent())
-//                    latestInComplete = lessonRepository.findLatestInComplete(previousLatestComplete.get().getId());
-//                else {
-//                    System.out.println("Not present...");
-//                    latestInComplete = lessonRepository.findLatestInComplete(0);
-//                }
-//            }
-//
-//
-//            List<Lesson> topicLessons = completedLessons.stream().filter(l -> l.getTopic().getId() == lesson.getTopic().getId()).collect(Collectors.toList());
-//            Optional<Lesson> latestComplete = topicLessons.stream().max(Comparator.comparing(Lesson::getId));
-//            Lesson latestInComplete;
-//            if (latestComplete.isPresent())
-//                latestInComplete = lessonRepository.findLatestInComplete(latestComplete.get().getId());
-//            else {
-//                System.out.println("Not present...");
-//                latestInComplete = lessonRepository.findLatestInComplete(0);
-//            }
-//
-//            lesson.getProblem().setProblemBody();
-//            if (lesson.getProblem().isSolutionRequired()) {
-//                try {
-//                    lessonService.initialise(lesson.getProblem());
-//                } catch (IOException ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//        }
-//
-//        model.addAttribute("prev", lessonRepository.findById(lessonId - 1));
-//        model.addAttribute("next", lessonRepository.findById(lessonId + 1));
-//        model.addAttribute("lesson", lesson);
-//
-//        return "lessons/lesson";
-//    }
 
     @GetMapping("/lessons/{lessonId}")
     public String lesson(@PathVariable long lessonId, Model model) {
         Lesson lesson = lessonRepository.findById(lessonId);
+
+        if (lesson == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson not found");
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User student = ((AppUserDetails) auth.getPrincipal()).getUser();
         Set<Lesson> completedLessons = student.getCompletedLessons();
         Set<Quiz> completedQuizzes = student.getCompletedQuizzes();
-        Optional<Lesson> latestComplete = completedLessons.stream().max(Comparator.comparing(Lesson::getId));
-        Optional<Quiz> latestCompleteQuiz = completedQuizzes.stream().max(Comparator.comparing(Quiz::getId));
-        Lesson latestInComplete;
-        Quiz latestInCompleteQuiz;
+        Lesson latestInComplete = lessonsProgressService.getLatestInCompleteLesson(completedLessons);
+        Quiz latestInCompleteQuiz = lessonsProgressService.getLatestInCompleteQuiz(completedQuizzes);
 
-        if (latestComplete.isPresent())
-            latestInComplete = lessonRepository.findLatestInComplete(latestComplete.get().getId());
-        else {
-            System.out.println("Not present...");
-            latestInComplete = lessonRepository.findLatestInComplete(0);
-        }
-
-        if (latestCompleteQuiz.isPresent())
-            latestInCompleteQuiz = quizRepository.findLatestInComplete(latestCompleteQuiz.get().getId());
-        else {
-            System.out.println("Not present...");
-            latestInCompleteQuiz = quizRepository.findLatestInComplete(0);
-        }
         if (latestInCompleteQuiz != null) {
             Topic latestInCompleteQuizTopic = latestInCompleteQuiz.getTopic();
             if(!student.getCompletedLessons().contains(lesson)) {
@@ -132,8 +70,8 @@ public class LessonController {
             model.addAttribute("next", "/quizzes/" + currentTopic.getQuiz().getId());
         else {
             Lesson nextLesson = lessonRepository.findById(lessonId + 1);
-            if (nextLesson == null)
-                model.addAttribute("next", null);
+            if (nextLesson == null || !currentTopic.getLessons().contains(nextLesson))
+                model.addAttribute("next", "/topics/" + currentTopic.getId());
             else
                 model.addAttribute("next", "/lessons/" + nextLesson.getId());
         }
@@ -146,6 +84,8 @@ public class LessonController {
             model.addAttribute("prev", "/lessons/" + prevLesson.getId());
 
         model.addAttribute("lesson", lesson);
+        model.addAttribute("latestInComplete",latestInComplete);
+        model.addAttribute("latestInCompleteQuiz", latestInCompleteQuiz);
 
         return "lessons/lesson";
     }

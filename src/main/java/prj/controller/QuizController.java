@@ -1,5 +1,7 @@
 package prj.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import prj.model.*;
 import prj.repository.QuestionRepository;
 import prj.repository.QuizRepository;
@@ -34,7 +36,9 @@ public class QuizController {
     @GetMapping("/quizzes/{quizId}")
     public String quiz(@PathVariable long quizId, Model model) {
         Quiz quiz = quizRepository.findById(quizId);
-        Lesson redirectedLesson = redirectedLesson(quiz);
+        if (quiz == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found");
+        Lesson redirectedLesson = quizService.redirectedLesson(quiz);
         if (redirectedLesson != null)
             return "redirect:/lessons/" + redirectedLesson.getId();
 
@@ -45,7 +49,10 @@ public class QuizController {
     @GetMapping("/quizzes/{quizId}/attempt")
     public String attempt(@PathVariable long quizId, Model model) {
         Quiz quiz = quizRepository.findById(quizId);
-        Lesson redirectedLesson = redirectedLesson(quiz);
+        if (quiz == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found");
+
+        Lesson redirectedLesson = quizService.redirectedLesson(quiz);
         if (redirectedLesson != null)
             return "redirect:/lessons/" + redirectedLesson.getId();
 
@@ -56,13 +63,21 @@ public class QuizController {
     @PostMapping("/quizzes/{quizId}/evaluate")
     public String evaluate(@PathVariable long quizId, HttpServletRequest request, Model model) {
         Quiz quiz = quizRepository.findById(quizId);
+        if (quiz == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found");
+
         String[] questionIds = request.getParameterValues("question");
         HashSet<Long> answers = new HashSet<>();
         int score = 0;
         for (String questionId : questionIds) {
             Question question = questionRepository.findById(Long.parseLong(questionId));
             System.out.println((request.getParameter("quiz-option-" + questionId)));
-            long answer = Long.parseLong(request.getParameter("quiz-option-" + questionId));
+            long answer;
+            try {
+                answer = Long.parseLong(request.getParameter("quiz-option-" + questionId));
+            } catch (NumberFormatException ex) {
+                answer = -1;
+            }
             answers.add(answer);
             if (quizService.getCorrectAnswer(question) == answer)
                 score++;
@@ -87,18 +102,5 @@ public class QuizController {
         model.addAttribute("answers",answers);
 
         return "quizzes/evaluate";
-    }
-
-    private Lesson redirectedLesson(Quiz quiz) {
-        Topic topic = quiz.getTopic();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User student = ((AppUserDetails) auth.getPrincipal()).getUser();
-        Optional<Lesson> lastLesson = topic.getLessons().stream().max(Comparator.comparing(Lesson::getId));
-
-         if (lastLesson.isPresent() && !student.getCompletedLessons().contains(lastLesson.get())) {
-             return lastLesson.get();
-         }
-
-         return null;
     }
 }

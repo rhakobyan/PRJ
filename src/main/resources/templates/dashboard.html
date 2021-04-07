@@ -1,46 +1,31 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments/main ::head">
+    <head th:replace="fragments/main ::head(title='Dashboard')">
     </head>
-    <body class="d-flex flex-column">
+    <body class="d-flex flex-column"  style="background-color: #F7F8FC;">
         <nav th:replace="fragments/main ::navbar"></nav>
         <!-- Page Content -->
         <main role="main" class="container">
             <h2>Learn Java</h2>
             <br>
             <div>
-                <div style="margin-bottom:50px; margin-left: 10%; margin-right:10%;">
+                <div style="margin-bottom:50px;">
                     <h5>Your Progress</h5>
-                    <div class="progress" style="height: 25px;">
+                    <div class="progress" style="height: 35px;">
                         <div class="progress-bar" role="progressbar" th:style="'width: '+${((#authentication.getPrincipal().getUser().completedLessons.size + #authentication.getPrincipal().getUser().completedQuizzes.size) * 100)/(totalLessons + 4)}+'%;'" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
                         th:text="${((#authentication.getPrincipal().getUser().completedLessons.size + #authentication.getPrincipal().getUser().completedQuizzes.size) * 100)/(totalLessons + 4)} + '%'">
                         </div>
                     </div>
                 </div>
-                <div th:each="topic: ${topics}" class="topicContainer">
-                    <div>
-                        <div data-toggle="collapse" th:attr="data-target='#collapse_'+${topic.id}"
-                             aria-expanded="false" th:attrappend="aria-controls='collapse_'+${topic.id}"
-                             class="topics">
-                            <span class="topicTitle" th:text="${topic.title}">Title</span>
-                            <i class="fa fa-chevron-down"></i>
-                            <i class="fa fa-chevron-up"></i>
-                        </div>
-                        <br><br>
-                        <p class="lessonCount" th:text="${topic.lessons.size()}+' Lessons'">Lessons</p>
+                <div th:each="topic: ${topics}">
+                    <div th:if="${topic.id % 2 != 0}" class="shadow-sm row topic-container">
+                        <div th:replace="fragments/topicItem ::description"></div>
+                        <div th:replace="fragments/topicItem ::image"></div>
                     </div>
-                    <div class="collapse" th:id="collapse_+${topic.id}">
-                        <p th:text="${topic.description}"></p>
-                        <div th:each="lesson: ${topic.lessons}">
-                            <i class="fa fa-code"></i>
-                            <a class="lessonTitle" th:href="'lessons/'+${lesson.id}" th:text="${lesson.title}">Lesson</a>
-                            <i th:each="user : ${lesson.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle" aria-hidden="true"></i>
-                        </div>
-                        <div th:if="${topic.quiz != null}">
-                            <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                            <a class="lessonTitle" th:href="'quizzes/'+${topic.quiz.id}" th:text="${topic.quiz.title}">Quiz</a>
-                            <i th:each="user : ${topic.quiz.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle" aria-hidden="true"></i>
-                        </div>
+
+                     <div th:if="${topic.id % 2 == 0}" class="shadow-sm row topic-container topic-container-right">
+                         <div th:replace="fragments/topicItem ::image"></div>
+                         <div th:replace="fragments/topicItem ::description"></div>
                     </div>
                     </div>
                 </div>

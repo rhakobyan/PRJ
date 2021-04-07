@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/main ::head">
+</head>
+<body class="d-flex flex-column">
+<nav th:replace="fragments/main ::navbar"></nav>
+<!-- Page Content -->
+<div class="container">
+
+    <div class="alert alert-danger">
+        <h4 th:text="${status + ' ' + error}">Error</h4>
+        <h6 th:if="${status == 404}">The page you are looking for doesn't exist!</h6>
+    </div>
+    </div>
+
+</div>
+<!-- /.container -->
+<footer th:replace="fragments/main ::footer"></footer>
+
+</body>
+</html>

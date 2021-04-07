@@ -13,8 +13,11 @@ public class Topic {
     @Column(nullable = false, unique = true, length = 50)
     private String title;
 
-    @Column
+    @Column(nullable = false, length = 500)
     private String description;
+
+    @Column(nullable = false)
+    private String image;
 
     @OneToMany(mappedBy = "topic")
     private List<Lesson> lessons;
@@ -44,6 +47,14 @@ public class Topic {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public List<Lesson> getLessons() {
