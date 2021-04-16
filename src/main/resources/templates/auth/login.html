@@ -6,11 +6,11 @@
 <nav th:replace="fragments/main ::navbar"></nav>
 <!-- Page Content -->
 <div class="container">
+    <div th:if="${param.error}" class="alert alert-danger">Your login credentials do not match</div>
     <div class="row justify-content-center">
         <form th:action="@{/login}" method="POST" enctype="utf8">
             <h2>Log In</h2>
             <hr>
-
             <div class="form-group">
                 <input type="email" class="form-control" name="email" placeholder="KCL Email address"
                        required="required">

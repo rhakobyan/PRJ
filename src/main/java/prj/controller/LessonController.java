@@ -93,16 +93,25 @@ public class LessonController {
     @PostMapping("/lessons/run")
     @ResponseBody
     public Map<String, String> runLesson(@RequestParam int id, @RequestParam String code) {
-        Problem problem = lessonRepository.findById(id).getProblem();
-        Map <String, String> compilation = lessonService.runCode(problem, code);
-        lessonRepository.save(problem.getLesson());
-        return compilation;
+        try {
+            Problem problem = lessonRepository.findById(id).getProblem();
+            Map <String, String> compilation = lessonService.runCode(problem, code);
+            lessonRepository.save(problem.getLesson());
+            return compilation;
+        } catch (NullPointerException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @PostMapping("/lessons/hint")
     @ResponseBody
     public String getHint(@RequestParam int id, @RequestParam String code) {
-        return lessonService.getHint(lessonRepository.findById(id).getProblem(), code);
+        try {
+            return lessonService.getHint(lessonRepository.findById(id).getProblem(), code);
+        } catch (NullPointerException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/lessons/solution")
@@ -110,10 +119,9 @@ public class LessonController {
     public String showSolution(@RequestParam int id, @RequestParam String code) {
         try {
             return lessonService.getSolution(lessonRepository.findById(id).getProblem(), code);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException | NullPointerException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return "";
     }
 
 }

@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class QuizController {
@@ -66,12 +68,18 @@ public class QuizController {
         if (quiz == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found");
 
+        if (quizService.redirectedLesson(quiz) != null)
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED);
+
         String[] questionIds = request.getParameterValues("question");
         HashSet<Long> answers = new HashSet<>();
         int score = 0;
+
+        if (questionIds == null)
+            throw new  ResponseStatusException(HttpStatus.BAD_REQUEST);
+
         for (String questionId : questionIds) {
             Question question = questionRepository.findById(Long.parseLong(questionId));
-            System.out.println((request.getParameter("quiz-option-" + questionId)));
             long answer;
             try {
                 answer = Long.parseLong(request.getParameter("quiz-option-" + questionId));

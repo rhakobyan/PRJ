@@ -66,6 +66,10 @@ public class Lesson {
         return topic;
     }
 
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
     public Set<User> getStudentsCompleted() {
         return studentsCompleted;
     }

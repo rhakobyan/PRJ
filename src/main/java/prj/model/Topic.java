@@ -3,6 +3,10 @@ package prj.model;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * The topic class represents a topic entity in the system.
+ * This class uses Spring JPA to mark fields as columns in the database.
+ */
 @Entity
 @Table(name = "topic")
 public class Topic {
@@ -16,6 +20,7 @@ public class Topic {
     @Column(nullable = false, length = 500)
     private String description;
 
+    // URL link to the image
     @Column(nullable = false)
     private String image;
 
@@ -24,6 +29,10 @@ public class Topic {
 
     @OneToOne(mappedBy = "topic")
     private Quiz quiz;
+
+    /**
+     * Getters and setters
+     */
 
     public long getId() {
         return id;

@@ -1,6 +1,7 @@
 INSERT INTO users (email, first_name, last_name, password) VALUES
     ("ruben.hakobyan@kcl.ac.uk", "Ruben", "Hakobyan", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK"),
-    ("test@kcl.ac.uk", "Test", "Test", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK");
+    ("test@kcl.ac.uk", "Test", "Test", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK"),
+    ("test2@kcl.ac.uk", "Test", "Test", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK");
 
 INSERT INTO topic (title, image, description) VALUES
     ("Introduction", "introduction.png","Welcome to learning Java! This section will provide an introduction to the Java programming language. You will learn more about what is Java, its history and much more. You will get introduced to writing your first own Java program starting by printing simple statements into the console."),
@@ -106,7 +107,15 @@ INSERT INTO lesson_complete (lesson_id, user_id) VALUES
     (17, 1),
     (18, 1),
     (19, 1),
-    (20, 1);
+    (20, 1),
+    (1, 2),
+    (2, 2),
+    (3, 2),
+    (4, 2),
+    (5, 2),
+    (6, 2),
+    (7, 2),
+    (8, 2);
 
 INSERT INTO quiz (title, pass_percent, topic_id) VALUES
     ("Variables Quiz", 80, 2),
@@ -123,7 +132,7 @@ INSERT INTO question (question, quiz_id) VALUES
     ("<h5>What data type can correctly store the following value: <code>'%'</code></h5>", 1),
     ("<h5>What data type can correctly store the number of people in an airplane?</h5>", 1),
     ("<h5>What data type can correctly store the percentage of people that live in the UK?</h5>", 1),
-    ("<h5>What data type can correctly store weather today is raining or not?></h5>", 1),
+    ("<h5>What data type can correctly store weather today is raining or not?</h5>", 1),
     ("<h5>What data type can correctly store the name of a person?</h5>", 1),
     ("<h5>What data type can correctly store the letter grade of a student?</h5>", 1),
     ("<h5>Which option is correct for storing a country's name?</h5>", 1),
@@ -131,7 +140,7 @@ INSERT INTO question (question, quiz_id) VALUES
     ("<h5>Which option is correct for storing a variable which says if you have passed a test or not?</h5>", 1),
     ("<h5>Which option is correct for storing a person's age as a whole number?</h5>", 1),
     ("<h5>Given the program below, which option correctly computes the total cost?</h5> <pre class='bg-dark text-white'><code>double unitCost = 5.25;\n int unitsBought = 7;</code> </pre>", 1),
-    ("<h5>Which declaration is incorrect?</h5>", 1),
+    ("<h5>Which declaration is correct?</h5>", 1),
     ("<h5>What value is stored in variable <code>cond</code>?</h5> <pre class='bg-dark text-white'><code>boolean cond = 12 >= 12;</code></pre>", 2),
     ("<h5>What operator should be used instead of <code>_</code>? <code>12 _ 5 = 17</code></h5>", 2),
     ("<h5>What operator should be used instead of <code>_</code>? <code>5 _ 2.5 = 2.5</code></h5>", 2),

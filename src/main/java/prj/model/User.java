@@ -87,6 +87,10 @@ public class User {
         this.completedLessons.add(lesson);
     }
 
+    public void setCompletedLessons(Set<Lesson> completedLessons) {
+        this.completedLessons = completedLessons;
+    }
+
     public Set<Quiz> getCompletedQuizzes() {
         return completedQuizzes;
     }

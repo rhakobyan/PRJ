@@ -2,7 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id 'jacoco'
+//	id 'jacoco'
 }
 
 group = 'com.example'
@@ -34,3 +34,43 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+sourceSets {
+	integrationTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	integrationTestImplementation.extendsFrom testImplementation
+	integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+task integrationTest(type: Test) {
+	description = 'Runs the integration tests.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+
+	useJUnitPlatform()
+
+	reports {
+		html.enabled true
+		junitXml.enabled = true
+	}
+	shouldRunAfter test
+}
+
+//jacoco {
+//	toolVersion = "0.8.6"
+//}
+//
+//jacocoTestReport {
+//	reports {
+//		xml.enabled false
+//		html.enabled true
+//		csv.enabled false
+//	}
+//}
