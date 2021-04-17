@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import prj.service.LessonsProgressService;
+import prj.service.ProgressService;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,7 +28,7 @@ public class LessonController {
     @Autowired
     private LessonService lessonService;
     @Autowired
-    private LessonsProgressService lessonsProgressService;
+    private ProgressService progressService;
 
 
     @GetMapping("/lessons/{lessonId}")
@@ -42,8 +42,8 @@ public class LessonController {
         User student = ((AppUserDetails) auth.getPrincipal()).getUser();
         Set<Lesson> completedLessons = student.getCompletedLessons();
         Set<Quiz> completedQuizzes = student.getCompletedQuizzes();
-        Lesson latestInComplete = lessonsProgressService.getLatestInCompleteLesson(completedLessons);
-        Quiz latestInCompleteQuiz = lessonsProgressService.getLatestInCompleteQuiz(completedQuizzes);
+        Lesson latestInComplete = progressService.getLatestInCompleteLesson(completedLessons);
+        Quiz latestInCompleteQuiz = progressService.getLatestInCompleteQuiz(completedQuizzes);
 
         if (latestInCompleteQuiz != null) {
             Topic latestInCompleteQuizTopic = latestInCompleteQuiz.getTopic();

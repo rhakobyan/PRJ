@@ -74,6 +74,10 @@ public class Lesson {
         return studentsCompleted;
     }
 
+    public void setStudentsCompleted(Set<User> studentsCompleted) {
+        this.studentsCompleted = studentsCompleted;
+    }
+
     public void addStudentsCompleted(User user) {
         this.studentsCompleted.add(user);
     }

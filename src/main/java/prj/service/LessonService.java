@@ -22,15 +22,16 @@ import java.util.concurrent.*;
 
 @Service
 public class LessonService {
-    SolutionTracer solutionTracer;
-    MisconceptionTracer misconceptionTracer;
+
+    private SolutionTracer solutionTracer;
+    private MisconceptionTracer misconceptionTracer;
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private LessonRepository lessonRepository;
     @Autowired
-    FeedbackModule feedbackModule;
+    private FeedbackModule feedbackModule;
 
     public void initialise(Problem problem) throws IOException {
         solutionTracer = new SolutionTracer();
@@ -72,7 +73,6 @@ public class LessonService {
                         thread.stop();
                 }
             }
-//            future.cancel(true);
             System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             compilation = new HashMap<>();
             compilation.put("type", "error");

@@ -3,7 +3,7 @@ package prj.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/*
  * The JavaASTNode class represents a single node in an Abstract Syntax Tree.
  * Each node has a set of children node and a parent node both of which can be null.
  */
@@ -16,7 +16,7 @@ public class JavaASTNode {
     private List<JavaASTNode> children;
     private JavaASTNode parent;
 
-    /**
+    /*
      * Default constructor that initialises the fields of the class.
      * @param name The name of the node.
      * @param text The textual description of the node in the context it is being used.
@@ -27,7 +27,7 @@ public class JavaASTNode {
         this.text = text;
     }
 
-    /**
+    /*
      * This method adds a new child node to the current node.
      * @param node The node to be added as a child.
      */
@@ -42,7 +42,7 @@ public class JavaASTNode {
         this.children.add(node);
     }
 
-    /**
+    /*
      * Getter
      * @return the name of the node.
      */
@@ -50,7 +50,7 @@ public class JavaASTNode {
         return name;
     }
 
-    /**
+    /*
      * Getter
      * @return the text of the node.
      */
@@ -58,7 +58,7 @@ public class JavaASTNode {
         return text;
     }
 
-    /**
+    /*
      * Getter
      * @return the list of children of the node.
      */
@@ -66,7 +66,7 @@ public class JavaASTNode {
         return children;
     }
 
-    /**
+    /*
      * Getter
      * @return the parent of the current node.
      */
@@ -74,7 +74,7 @@ public class JavaASTNode {
         return parent;
     }
 
-    /**
+    /*
      * Setter
      * @param parent The parent of the node to be set.
      */

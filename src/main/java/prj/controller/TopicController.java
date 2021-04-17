@@ -15,14 +15,14 @@ import prj.model.Topic;
 import prj.model.User;
 import prj.repository.TopicRepository;
 import prj.service.AppUserDetails;
-import prj.service.LessonsProgressService;
+import prj.service.ProgressService;
 
 @Controller
 public class TopicController {
     @Autowired
     private TopicRepository topicRepository;
     @Autowired
-    private LessonsProgressService lessonsProgressService;
+    private ProgressService progressService;
 
     @GetMapping("/topics/{topicId}")
     public String topic(@PathVariable long topicId, Model model) {
@@ -41,8 +41,8 @@ public class TopicController {
         }
         int completedPercentage = (completedMaterialInTopic * 100) / (totalNumberOfMaterial);
         model.addAttribute("completedPercentage", completedPercentage);
-        model.addAttribute("latestInComplete", lessonsProgressService.getLatestInCompleteLesson(student.getCompletedLessons()));
-        model.addAttribute("latestInCompleteQuiz", lessonsProgressService.getLatestInCompleteQuiz(student.getCompletedQuizzes()));
+        model.addAttribute("latestInComplete", progressService.getLatestInCompleteLesson(student.getCompletedLessons()));
+        model.addAttribute("latestInCompleteQuiz", progressService.getLatestInCompleteQuiz(student.getCompletedQuizzes()));
         return "topics/topic";
     }
 }
