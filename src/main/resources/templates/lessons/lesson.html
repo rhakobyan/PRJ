@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="sidebar-header">
-                    <h3 th:text="${lesson.topic.title}">Bootstrap Sidebar</h3>
+                    <h3 th:text="${lesson.topic.title}">Sidebar</h3>
                 </div>
                 <div style="padding: 30px;">
                     <h5>Lessons</h5>
@@ -62,10 +62,10 @@
             <div class="row lesson">
                 <div class="col-md-5" style="padding:10px; height:100%; overflow-y: auto;">
                     <h3>
-                        <i class='fa fa-book'></i> <span th:text='${lesson.title}'>Title</span>
+                        <i class='fa fa-book'></i> <span id="lessonTitle" th:text='${lesson.title}'>Title</span>
                     </h3>
                     <hr>
-                    <div  th:utext="${lesson.explanation}">explanation</div>
+                    <div id="explanation" th:utext="${lesson.explanation}">explanation</div>
                 </div>
                 <div class="col-md-7">
                     <div class="row" id="codeEditor"></div>

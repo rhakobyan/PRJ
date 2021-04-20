@@ -6,7 +6,7 @@ import prj.model.*;
 import prj.repository.LessonRepository;
 
 import prj.repository.UserRepository;
-import prj.service.AppUserDetails;
+import prj.userdetails.AppUserDetails;
 import prj.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

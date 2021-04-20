@@ -28,6 +28,7 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
 
 }
 
@@ -40,11 +41,18 @@ sourceSets {
 		compileClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.output
 	}
+	uiIntegrationTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
 }
 
 configurations {
 	integrationTestImplementation.extendsFrom testImplementation
 	integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+
+	uiIntegrationTestImplementation.extendsFrom testImplementation
+	uiIntegrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 task integrationTest(type: Test) {
@@ -53,6 +61,22 @@ task integrationTest(type: Test) {
 
 	testClassesDirs = sourceSets.integrationTest.output.classesDirs
 	classpath = sourceSets.integrationTest.runtimeClasspath
+
+	useJUnitPlatform()
+
+	reports {
+		html.enabled true
+		junitXml.enabled = true
+	}
+	shouldRunAfter test
+}
+
+task uiIntegrationTest(type: Test) {
+	description = 'Runs the user interface integration tests.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.uiIntegrationTest.output.classesDirs
+	classpath = sourceSets.uiIntegrationTest.runtimeClasspath
 
 	useJUnitPlatform()
 

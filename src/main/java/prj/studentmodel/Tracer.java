@@ -21,18 +21,27 @@ public abstract class Tracer {
     public abstract void initialise(Problem problem) throws IOException;
     public abstract JavaASTNode trace(Problem problem, String code);
 
-    protected JavaASTNode generateAST(String solution) {
-        JavaLexer lexer = new JavaLexer(CharStreams.fromString(solution));
+    /*
+     * Generate an Abstract Syntax tree for a given code string.
+     * @param code The program for which to generate the AST.
+     * @return the root node of the generated Abstract Syntax Tree
+     */
+    protected JavaASTNode generateAST(String code) {
+        // Lex the program
+        JavaLexer lexer = new JavaLexer(CharStreams.fromString(code));
+        // Tokenize the program
         CommonTokenStream tokens = new CommonTokenStream(lexer);
+        // Parse the program
         JavaParser parser = new JavaParser(tokens);
         ParseTree tree = parser.block();
         AbstractTreeConstructor constructor = new AbstractTreeConstructor();
+        // Generate the AST, and return the root node
         return constructor.visit(tree);
     }
 
     protected JavaASTNode compareTrees (JavaASTNode modelSolutionNode, JavaASTNode currentSolutionNode) {
-//        System.out.println("Comparing " + modelSolutionNode.getName() + " and " + currentSolutionNode.getName());
         if (!modelSolutionNode.getName().equals(currentSolutionNode.getName())) {
+            // If the node is a null node then return its parent
             if (modelSolutionNode.getName().equals("null-node"))
                 return modelSolutionNode.getParent();
 
@@ -92,6 +101,13 @@ public abstract class Tracer {
         return "{ " + code + " }";
     }
 
+    /*
+     * This method determines the part of a problem object for which an AST should be built
+     * extracts that part and adds parentheses before and after that part.
+     * @param problem The problem file for which to build an AST.
+     * @param code The code-solution for the given problem file.
+     * @return the substring of the solution which needs to be parsed enclosed in parentheses.
+     */
     protected String normalise(Problem problem, String code) {
         String[] lines = code.split(System.getProperty("line.separator"));
         StringJoiner joiner = new StringJoiner("");
@@ -104,6 +120,11 @@ public abstract class Tracer {
         return joiner.toString();
     }
 
+    /*
+     * Using regular expressions, check if a given node or its children contain a string.
+     * @param node The node for which to check if it or its children contain a string.
+     * @return True if the node or its children contain a string and false otherwise.
+     */
     protected boolean containsStrings (JavaASTNode node) {
         Pattern pattern = Pattern.compile("\"[^\"\\\\]*(\\\\.[^\"\\\\]*)*\"");
         Matcher matcher = pattern.matcher(node.getName());
@@ -118,6 +139,9 @@ public abstract class Tracer {
         return false;
     }
 
+    /*
+     * Check if the node is a success node.
+     */
     public boolean successfulTrace(JavaASTNode node) {
         return node.getName().equals("success-node");
     }

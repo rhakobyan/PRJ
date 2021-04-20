@@ -1,7 +1,8 @@
 INSERT INTO users (email, first_name, last_name, password) VALUES
     ("ruben.hakobyan@kcl.ac.uk", "Ruben", "Hakobyan", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK"),
     ("test@kcl.ac.uk", "Test", "Test", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK"),
-    ("test2@kcl.ac.uk", "Test", "Test", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK");
+    ("test2@kcl.ac.uk", "Test", "Test", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK"),
+    ("test3@kcl.ac.uk", "Test", "Test", "$2a$10$M7pSodU7jpIjfffioigIuO.abhDBT1CNmca3wrXCla2nf9U/YbeEK");
 
 INSERT INTO topic (title, image, description) VALUES
     ("Introduction", "introduction.png","Welcome to learning Java! This section will provide an introduction to the Java programming language. You will learn more about what is Java, its history and much more. You will get introduced to writing your first own Java program starting by printing simple statements into the console."),
@@ -115,7 +116,10 @@ INSERT INTO lesson_complete (lesson_id, user_id) VALUES
     (5, 2),
     (6, 2),
     (7, 2),
-    (8, 2);
+    (8, 2),
+    (1, 4),
+    (2, 4),
+    (3, 4);
 
 INSERT INTO quiz (title, pass_percent, topic_id) VALUES
     ("Variables Quiz", 80, 2),

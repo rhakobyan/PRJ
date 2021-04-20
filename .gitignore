@@ -44,3 +44,6 @@ out/
 /src/main/java/jits/antlr/JavaLexer.g4
 /src/main/java/jits/antlr/JavaParser.g4
 /src/main/java/jits/ast
+
+### Chrome Driver ###
+chromedriver

@@ -1,4 +1,4 @@
-package prj.service;
+package prj.userdetails;
 
 import prj.model.User;
 

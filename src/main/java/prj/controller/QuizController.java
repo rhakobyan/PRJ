@@ -6,7 +6,7 @@ import prj.model.*;
 import prj.repository.QuestionRepository;
 import prj.repository.QuizRepository;
 import prj.repository.UserRepository;
-import prj.service.AppUserDetails;
+import prj.userdetails.AppUserDetails;
 import prj.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,11 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 public class QuizController {

@@ -80,6 +80,10 @@ public class Quiz {
         this.studentsCompleted.add(user);
     }
 
+    public void setStudentsCompleted(Set<User> studentsCompleted) {
+        this.studentsCompleted = studentsCompleted;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof Quiz) {

@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import prj.model.Topic;
 import prj.model.User;
 import prj.repository.TopicRepository;
-import prj.service.AppUserDetails;
+import prj.userdetails.AppUserDetails;
 import prj.service.ProgressService;
 
 @Controller

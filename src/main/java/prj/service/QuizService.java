@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import prj.model.*;
 import org.springframework.stereotype.Service;
+import prj.userdetails.AppUserDetails;
 
 import java.util.Comparator;
 import java.util.Optional;

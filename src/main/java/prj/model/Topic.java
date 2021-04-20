@@ -3,7 +3,7 @@ package prj.model;
 import javax.persistence.*;
 import java.util.List;
 
-/**
+/*
  * The topic class represents a topic entity in the system.
  * This class uses Spring JPA to mark fields as columns in the database.
  */

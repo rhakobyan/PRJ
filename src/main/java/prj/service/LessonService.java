@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import prj.userdetails.AppUserDetails;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
@@ -68,8 +69,8 @@ public class LessonService {
             }
         } catch (TimeoutException | ExecutionException | InterruptedException ex) {
             Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-            for(Thread thread : threadSet){
-                if(thread.getId()==runner.getThreadId()){
+            for(Thread thread : threadSet) {
+                if(thread.getId() == runner.getThreadId()) {
                         thread.stop();
                 }
             }

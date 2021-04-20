@@ -43,7 +43,7 @@ public class MisconceptionTracer extends Tracer {
         if (equatedMisconception != null)
             return equatedMisconception.getHint();
 
-        return "Internal Server error";
+        return "Internal Server Error";
     }
 
 }

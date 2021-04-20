@@ -6,6 +6,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import prj.dto.UserDto;
 
+import java.util.HashSet;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,10 +23,25 @@ class UserTest {
         user.setFirstName("TestF");
         user.setLastName("TestL");
 
+        Lesson lesson = new Lesson();
+        lesson.setId(1);
+        user.setCompletedLessons(new HashSet<>());
+        user.addCompletedLesson(lesson);
+
+        Quiz quiz = new Quiz();
+        quiz.setId(1L);
+        user.setCompletedQuizzes(new HashSet<>());
+        user.addCompletedQuiz(quiz);
+
+        assertEquals(user.getId(), 1);
         assertEquals(user.getEmail(), "test@kcl.ac.uk");
         assertEquals(user.getPassword(), "password");
         assertEquals(user.getFirstName(), "TestF");
         assertEquals(user.getLastName(), "TestL");
+        assertEquals(user.getCompletedLessons().size(), 1);
+        assertTrue(user.getCompletedLessons().contains(lesson));
+        assertEquals(user.getCompletedQuizzes().size(), 1);
+        assertTrue(user.getCompletedQuizzes().contains(quiz));
     }
 
     @Test

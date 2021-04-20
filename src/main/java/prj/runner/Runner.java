@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-public class Runner implements Callable<Map<String,String>>{
+public class Runner implements Callable<Map<String,String>> {
     private String code;
     private long threadId;
 
@@ -24,7 +24,7 @@ public class Runner implements Callable<Map<String,String>>{
 
     @Override
     public Map<String, String> call() {
-       threadId = Thread.currentThread().getId();
+        threadId = Thread.currentThread().getId();
         Map<String, String> map = new HashMap<>();
         StringBuilder message = new StringBuilder();
 
@@ -40,7 +40,7 @@ public class Runner implements Callable<Map<String,String>>{
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
 
             if (!task.call()) {
-                //Create the error messages to be displayed
+                // Create the error messages to be displayed
                 for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics())
                     message.append("Error on line ").append(diagnostic.getLineNumber()).append(": ").
                             append(diagnostic.getMessage(Locale.ENGLISH)).append("\n");
@@ -59,12 +59,12 @@ public class Runner implements Callable<Map<String,String>>{
                 System.setOut(printStream);
                 method.invoke(null, (Object) args);  // invoke the method
 
-                //close the stream
+                // Close the stream
                 printStream.flush();
                 printStream.close();
 
                 message = new StringBuilder(out.toString());
-                //Reset output stream to the standard terminal
+                // Reset output stream to the standard terminal
                 System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
                 fileManager.close();
                 map.put("type", "success");

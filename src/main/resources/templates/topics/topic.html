@@ -30,9 +30,9 @@
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <h2 th:text="${topic.title}">Title</h2>
+                        <h2 th:text="${topic.title}" id="title">Title</h2>
                         <hr>
-                        <p th:text="${topic.description}">Description</p>
+                        <p th:text="${topic.description}" id="description">Description</p>
                     </div>
                 </div>
             </div>
@@ -40,16 +40,16 @@
                 <div th:if="${latestInComplete != null && ((topic.getLessons().size() > 0 && latestInComplete.getId() < topic.getLessons().get(0).getId()) || (topic.getQuiz() != null && latestInCompleteQuiz.getId() != topic.getQuiz().getId()))}" class="alert alert-danger">
                     You need to complete the previous section before moving on to this one!
                 </div>
-                <h4>Lessons</h4>
+                <h4 id="lessons">Lessons</h4>
                 <div th:each="lesson: ${topic.lessons}" class="alert alert-secondary">
                     <i class="fa fa-code fa-lg fa-title-description"></i>
-                    <div th:switch="${#authentication.getPrincipal().getUser().getCompletedLessons().contains(lesson) || latestInComplete.equals(lesson)}">
+                    <div th:switch="${#authentication.getPrincipal().getUser().getCompletedLessons().contains(lesson) || (latestInComplete.equals(lesson) && (topic.getQuiz() == null || latestInCompleteQuiz.getId() == topic.getQuiz().getId()))}">
                         <a th:case="${true}" class="lessonTitle" th:href="'/lessons/' + ${lesson.id}" th:text="${lesson.title}">Lesson</a>
                         <a th:case="${false}" class="lessonTitle" href="#" th:text="${lesson.title}" disabled>Lesson</a>
                     </div>
                     <i th:each="user : ${lesson.studentsCompleted}" th:if="${#authentication.getPrincipal().getUser().id == user.id}" class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
                 </div>
-                <h4  th:if="${topic.quiz != null}">Quiz</h4>
+                <h4  th:if="${topic.quiz != null}" id="quizzes">Quiz</h4>
                 <div th:if="${topic.quiz != null}" class="alert alert-secondary">
                     <i class="fa fa-question-circle-o fa-lg fa-title-description" aria-hidden="true"></i>
                     <div th:switch="${(#authentication.getPrincipal().getUser().getCompletedQuizzes().contains(topic.quiz) || latestInCompleteQuiz.equals(topic.quiz)) && (latestInComplete == null || latestInComplete.getId() > topic.getLessons().get(topic.getLessons.size() - 1).getId())}">

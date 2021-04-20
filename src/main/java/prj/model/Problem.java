@@ -76,8 +76,16 @@ public class Problem {
         return solutionStartIndex;
     }
 
+    public void setSolutionStartIndex(int solutionStartIndex) {
+        this.solutionStartIndex = solutionStartIndex;
+    }
+
     public int getSolutionEndLength() {
         return solutionEndLength;
+    }
+
+    public void setSolutionEndLength(int solutionEndLength) {
+        this.solutionEndLength = solutionEndLength;
     }
 
     public List<Solution> getSolutions() {
@@ -92,10 +100,15 @@ public class Problem {
         return misconceptions;
     }
 
+    public void setMisconceptions(List<Misconception> misconceptions) {
+        this.misconceptions = misconceptions;
+    }
+
     public void setProblemBody() {
         try {
             this.problemBody = FileIO.resourceFileToString(this.getProblemFile());
         } catch (IOException ex) {
+            this.problemBody = "";
             ex.printStackTrace();
         }
     }

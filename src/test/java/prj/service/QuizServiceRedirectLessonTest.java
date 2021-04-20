@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import prj.model.*;
+import prj.userdetails.AppUserDetails;
 
 import static org.junit.jupiter.api.Assertions.*;
 

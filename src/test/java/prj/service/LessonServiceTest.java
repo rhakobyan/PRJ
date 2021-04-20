@@ -20,6 +20,7 @@ import prj.repository.UserRepository;
 import prj.studentmodel.FeedbackModule;
 import prj.studentmodel.MisconceptionTracer;
 import prj.studentmodel.SolutionTracer;
+import prj.userdetails.AppUserDetails;
 
 import java.io.IOException;
 import java.util.HashSet;

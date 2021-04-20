@@ -98,4 +98,8 @@ public class User {
     public void addCompletedQuiz(Quiz completedQuiz) {
         this.completedQuizzes.add(completedQuiz);
     }
+
+    public void setCompletedQuizzes(Set<Quiz> completedQuizzes) {
+        this.completedQuizzes = completedQuizzes;
+    }
 }
