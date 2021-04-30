@@ -5,6 +5,11 @@ import prj.dto.UserDto;
 import javax.persistence.*;
 import java.util.Set;
 
+/*
+ * The User class represents a user entity in the system.
+ * Spring Data JPA annotations are applied to the class in order to represent it as a table inside the database.
+ * Using Spring Data JPA its fields are marked as columns in the table.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -24,12 +29,18 @@ public class User {
     @Column(name = "last_name", nullable = false, length = 20)
     private String lastName;
 
+    // The set of lessons that the user has completed.
     @ManyToMany(mappedBy = "studentsCompleted", fetch = FetchType.EAGER)
     Set<Lesson> completedLessons;
 
+    // The set of quizzes that the user has completed.
     @ManyToMany(mappedBy = "studentsCompleted", fetch = FetchType.EAGER)
     Set<Quiz> completedQuizzes;
 
+    /*
+     * Constructor.
+     * Constructs a user from a UserDto object.
+     */
     public User(UserDto userDto) {
         this.email = userDto.getEmail();
         this.password = userDto.getPassword();
@@ -37,7 +48,15 @@ public class User {
         this.lastName = userDto.getLastName();
     }
 
+    /*
+     * The default constructor.
+     * Initialises an empty user.
+     */
     public User() {}
+
+    /*
+     * Getters and Setters.
+     */
 
     public long getId() {
         return id;

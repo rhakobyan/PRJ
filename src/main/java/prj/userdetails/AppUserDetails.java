@@ -7,6 +7,10 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/*
+ * AppUserDetails implements a UserDetails interface used for accessing a user and data related to it.
+ * It overrides some of the user details methods to present their correct implementation.
+ */
 public class AppUserDetails implements UserDetails {
 
     private User user;

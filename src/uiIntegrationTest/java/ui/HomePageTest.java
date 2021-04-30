@@ -19,7 +19,7 @@ public class HomePageTest {
 
     @BeforeEach
     public void setUp() {
-        System.setProperty(" webdriver.chrome.driver", "chromedriver");
+        System.setProperty(" webdriver.chrome.driver", ChromeDriverLocation.location);
         driver = new ChromeDriver();
     }
 

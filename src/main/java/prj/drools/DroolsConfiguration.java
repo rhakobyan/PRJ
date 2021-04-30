@@ -9,6 +9,9 @@ import org.kie.internal.io.ResourceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/*
+ * The Drools Configuration class defined a kieContainer bean and specifies the location of the rules file.
+ */
 @Configuration
 public class DroolsConfiguration {
 

@@ -15,7 +15,12 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+ * The abstract Tracer of the student model implements methods for various model tracing techniques.
+ * It also declares abstract methods that its subclasses must implement.
+ */
 public abstract class Tracer {
+    // The number of nodes that were visted during compareTrees()
     protected int nodesVisited;
 
     public abstract void initialise(Problem problem) throws IOException;
@@ -24,7 +29,7 @@ public abstract class Tracer {
     /*
      * Generate an Abstract Syntax tree for a given code string.
      * @param code The program for which to generate the AST.
-     * @return the root node of the generated Abstract Syntax Tree
+     * @return the root node of the generated Abstract Syntax Tree.
      */
     protected JavaASTNode generateAST(String code) {
         // Lex the program
@@ -34,37 +39,59 @@ public abstract class Tracer {
         // Parse the program
         JavaParser parser = new JavaParser(tokens);
         ParseTree tree = parser.block();
-        AbstractTreeConstructor constructor = new AbstractTreeConstructor();
+
         // Generate the AST, and return the root node
+        AbstractTreeConstructor constructor = new AbstractTreeConstructor();
         return constructor.visit(tree);
     }
 
-    protected JavaASTNode compareTrees (JavaASTNode modelSolutionNode, JavaASTNode currentSolutionNode) {
-        if (!modelSolutionNode.getName().equals(currentSolutionNode.getName())) {
+    /*
+     * This method compares two Abstract Syntax Trees from their root JavaASTNode.
+     * The trees are compared using pre-order traversal.
+     * Firstly the nodes themselves are compared and then their respective children are recursively traversed.
+     * This method also counts the number of nodes that have been visited during the traversal.
+     * This is later used by solutionTracer for obtaining the model solution that matches the student code the most.
+     * @param modelNode A model solution node if called from the SolutionTracer,
+     * and a misconception node if called from the MisconceptionTracer.
+     * @param currentSolutionNode AST node of the user written code.
+     * @return the node in @param modelNode at which the two trees diverge.
+     * A symbolic success-node is returned if the trees are complete match each other.
+     * A symbolic extra-node is returned if both the trees have been successfully traversed until the end
+     * of the @param modelNode, but the @param currentSolutionNode has further children.
+     */
+    protected JavaASTNode compareTrees (JavaASTNode modelNode, JavaASTNode currentSolutionNode) {
+        if (!modelNode.getName().equals(currentSolutionNode.getName())) {
             // If the node is a null node then return its parent
-            if (modelSolutionNode.getName().equals("null-node"))
-                return modelSolutionNode.getParent();
+            if (modelNode.getName().equals("null-node"))
+                return modelNode.getParent();
 
-            return modelSolutionNode;
+            return modelNode;
         }
 
         ++nodesVisited;
-        List<JavaASTNode> modelSolutionChildren = modelSolutionNode.getChildren();
+        List<JavaASTNode> modelChildren = modelNode.getChildren();
         List<JavaASTNode> currentSolutionChildren = currentSolutionNode.getChildren();
 
-        if (((modelSolutionNode.getName().equals("+") && !containsStrings(modelSolutionNode)) || modelSolutionNode.getName().equals("*")
-                || modelSolutionNode.getName().equals("==") || modelSolutionNode.getName().equals("!=") ||
-                modelSolutionNode.getName().equals("&&") || modelSolutionNode.getName().equals("||"))
-                && modelSolutionChildren.size() == 2 && currentSolutionChildren.size() == 2) {
+        /* If the nodes are +, ==, !=, &&, ||, compare them both in the normal order and in reverse order
+        This is a normalisation technique, as changing the places of the LHS and RHS of these operators
+        does not affect the logic of the program.
+        For example, var1 + var2 is the same as var2 + var1
+        && is an exception, since in Java the order technically matters. However, since the programs
+        taught in this ITS are simple, this can be ignored. */
+
+        if (((modelNode.getName().equals("+") && !containsStrings(modelNode)) || modelNode.getName().equals("*")
+                || modelNode.getName().equals("==") || modelNode.getName().equals("!=") ||
+                modelNode.getName().equals("&&") || modelNode.getName().equals("||"))
+                && modelChildren.size() == 2 && currentSolutionChildren.size() == 2) {
             JavaASTNode firstCompare =
-                    compareTrees(modelSolutionChildren.get(0), currentSolutionChildren.get(0));
+                    compareTrees(modelChildren.get(0), currentSolutionChildren.get(0));
             JavaASTNode secondCompare =
-                    compareTrees(modelSolutionChildren.get(1), currentSolutionChildren.get(1));
+                    compareTrees(modelChildren.get(1), currentSolutionChildren.get(1));
 
             JavaASTNode altFirstCompare =
-                    compareTrees(modelSolutionChildren.get(0), currentSolutionChildren.get(1));
+                    compareTrees(modelChildren.get(0), currentSolutionChildren.get(1));
             JavaASTNode altSecondCompare =
-                    compareTrees(modelSolutionChildren.get(1), currentSolutionChildren.get(0));
+                    compareTrees(modelChildren.get(1), currentSolutionChildren.get(0));
 
             if ((firstCompare.getName().equals("success-node") &&
                     secondCompare.getName().equals("success-node")) ||
@@ -81,22 +108,29 @@ public abstract class Tracer {
                 return altSecondCompare;
         }
 
-        for (int i = 0; i < modelSolutionChildren.size(); ++i) {
+        // Compare all their children and return the divergence point if the result
+        // of the comparison is not a success-node
+        for (int i = 0; i < modelChildren.size(); ++i) {
             if (i >= currentSolutionChildren.size()) {
-                return modelSolutionChildren.get(i);
+                return modelChildren.get(i);
             }
 
             JavaASTNode comparisonOutcome =
-                    compareTrees(modelSolutionChildren.get(i), currentSolutionChildren.get(i));
+                    compareTrees(modelChildren.get(i), currentSolutionChildren.get(i));
             if (!comparisonOutcome.getName().equals("success-node"))
                 return comparisonOutcome;
         }
-        if (currentSolutionChildren.size() > modelSolutionChildren.size())
+        // The currentSolutionNode has more children than the modelNode
+        if (currentSolutionChildren.size() > modelChildren.size())
             return new JavaASTNode("extra-node", "");
 
+        // Everything has passed, return success-node, that is, the two trees are equal
         return new JavaASTNode("success-node", "");
     }
 
+    /*
+     * Utility method for adding parentheses to a string code.
+     */
     protected String addParentheses(String code) {
         return "{ " + code + " }";
     }

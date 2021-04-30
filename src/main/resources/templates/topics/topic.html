@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="topic-items-container">
-                <div th:if="${latestInComplete != null && ((topic.getLessons().size() > 0 && latestInComplete.getId() < topic.getLessons().get(0).getId()) || (topic.getQuiz() != null && latestInCompleteQuiz.getId() != topic.getQuiz().getId()))}" class="alert alert-danger">
+                <div th:if="${latestInComplete != null && ((topic.getLessons().size() > 0 && latestInComplete.getId() < topic.getLessons().get(0).getId()) || (topic.getQuiz() != null && latestInCompleteQuiz.getId() < topic.getQuiz().getId()))}" class="alert alert-danger">
                     You need to complete the previous section before moving on to this one!
                 </div>
                 <h4 id="lessons">Lessons</h4>

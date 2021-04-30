@@ -27,9 +27,6 @@ $(function() {
         }
     });
 
-//    javaCodeMirror.markText({line: 0, ch:0}, {line: startIndex, ch:0}, {readOnly: true});
-//    javaCodeMirror.markText({line: javaCodeMirror.lineCount() - 1 - endLength, ch:0}, {line: javaCodeMirror.lineCount(), ch:1}, {readOnly: true});
-
     $("#run").click(function() {
         var codeEditorValue = javaCodeMirror.getValue();
         $.post("/lessons/run",
@@ -62,6 +59,7 @@ $(function() {
         showSolution();
     });
 
+    // Send a POST request to lessons/hint when the Hint button is clicked.
     $("#hint").click(function() {
         var codeEditorValue = javaCodeMirror.getValue();
         $.post("/lessons/hint",
@@ -69,8 +67,9 @@ $(function() {
             id: problemId,
             code: codeEditorValue
         },
-        function(result, status) {
+        function(result, status) { // Success function
             ++stuckCounter;
+            // Make the hint modal appear and puts the hint text inside it.
             $("#modal").modal("show");
             $("#modalTitle").html("Hint");
             $("#modalParagraph").html(result.replaceAll("&", "&#38;"));

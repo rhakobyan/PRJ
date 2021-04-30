@@ -85,7 +85,7 @@ INSERT INTO solution (solution_file, problem_id) VALUES
     ("solutions/problem20/solution1.java", 20);
 
 INSERT INTO misconception (hint, code, problem_id) VALUES
-    ("Using the == operator here would be inappropriate, because even if you have walked more than the recommended amount, that does not mean you haven't reached the goal. You should instead check for yourSteps >= recommendedSteps.", "boolean recommendedStepsWalked = yourSteps == recommendedSteps;\n System.out.println(recommendedStepsWalked);", 11);
+    ("Using the <code>==</code> operator here would be inappropriate, because even if you have walked more than the recommended amount, that does not mean you haven't reached the goal. You should instead check for <code>yourSteps >= recommendedSteps</code>", "boolean recommendedStepsWalked = yourSteps == recommendedSteps;\n System.out.println(recommendedStepsWalked);", 11);
 
 
 INSERT INTO lesson_complete (lesson_id, user_id) VALUES
@@ -128,7 +128,7 @@ INSERT INTO quiz (title, pass_percent, topic_id) VALUES
     ("Loops Quiz", 70, 5);
 
 INSERT INTO question (question, quiz_id) VALUES
-    ("<h5>Which one of the following options represent a Java type?</h5>", 1),
+    ("<h5>Which one of the following options represents a Java type?</h5>", 1),
     ("<h5>What data type can correctly store the following value: <code>12</code></h5>", 1),
     ("<h5>What data type can correctly store the following value: <code>0.25</code></h5>", 1),
     ("<h5>What data type can correctly store the following value: <code>false</code></h5>", 1),
@@ -136,7 +136,7 @@ INSERT INTO question (question, quiz_id) VALUES
     ("<h5>What data type can correctly store the following value: <code>'%'</code></h5>", 1),
     ("<h5>What data type can correctly store the number of people in an airplane?</h5>", 1),
     ("<h5>What data type can correctly store the percentage of people that live in the UK?</h5>", 1),
-    ("<h5>What data type can correctly store weather today is raining or not?</h5>", 1),
+    ("<h5>What data type can correctly store whether today is raining or not?</h5>", 1),
     ("<h5>What data type can correctly store the name of a person?</h5>", 1),
     ("<h5>What data type can correctly store the letter grade of a student?</h5>", 1),
     ("<h5>Which option is correct for storing a country's name?</h5>", 1),

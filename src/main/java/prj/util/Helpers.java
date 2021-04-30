@@ -4,8 +4,16 @@ import prj.ast.JavaASTNode;
 
 import java.util.Locale;
 
+/*
+ * The Helpers class provides some helper methods for Drool rules.drl file when generating hint messages.
+ */
 public class Helpers {
 
+    /*
+     * Given @param node and a value, this method recursively checks all its parents until one
+     * their names is not @param value.
+     * @return the most senior node whose name is value starting from the first passed @param node.
+     */
     public static JavaASTNode getMostSenior(JavaASTNode node, String value) {
         if (node.getParent() == null)
             return node;
@@ -16,6 +24,9 @@ public class Helpers {
         return node;
     }
 
+    /*
+     * Translate comparison operator names to their String values.
+     */
     public static String getComparisonName(String operatorName) {
         switch (operatorName) {
             case ("=="):
@@ -34,6 +45,9 @@ public class Helpers {
         return "";
     }
 
+    /*
+     * Make the first letter of @param string lowercase and return it.
+     */
     public static String deCapitalise(String string) {
         return string.substring(0, 1).toLowerCase(Locale.ROOT) + string.substring(1);
     }

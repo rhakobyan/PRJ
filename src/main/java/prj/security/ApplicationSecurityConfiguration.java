@@ -13,6 +13,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/*
+ * Authentication Security Configurations.
+ * Configures what pages authenticated and not authenticated users can view.
+ * Specifies redirect locations for restricted pages.
+ * Provides beans for specifying the user details service and the password encoder to be used.
+ */
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapter {

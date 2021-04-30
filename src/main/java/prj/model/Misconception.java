@@ -2,6 +2,11 @@ package prj.model;
 
 import javax.persistence.*;
 
+/*
+ * The Misconception class represents a misconception entity in the system.
+ * Spring Data JPA annotations are applied to the class in order to represent it as a table inside the database.
+ * Using Spring Data JPA its fields are marked as columns in the table.
+ */
 @Entity
 @Table(name = "misconception")
 public class Misconception {
@@ -15,9 +20,14 @@ public class Misconception {
     @Column(nullable = false, columnDefinition="TEXT")
     private String code;
 
+    // The problem that this misconception is associated with.
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "problem_id", referencedColumnName = "id")
     private Problem problem;
+
+    /*
+     * Getters and setters
+     */
 
     public long getId() {
         return id;

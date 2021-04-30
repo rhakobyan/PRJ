@@ -5,6 +5,11 @@ import prj.util.FileIO;
 import java.io.IOException;
 import java.util.List;
 
+/*
+ * The Problem class represents a problem entity in the system.
+ * Spring Data JPA annotations are applied to the class in order to represent it as a table inside the database.
+ * Using Spring Data JPA its fields are marked as columns in the table.
+ */
 @Entity
 @Table(name = "problem")
 public class Problem {
@@ -15,26 +20,41 @@ public class Problem {
     @Column(nullable = false)
     private String problemFile;
 
+    // whether a solution is required in order to to pass this problem.
+    // True by default.
     @Column(columnDefinition="tinyint(1) default 1")
     private boolean solutionRequired;
 
+    // String representation of the problem file
     @Transient
     private String problemBody;
 
+    // The index at which the relevant code logic is written.
+    // This lets ignore the irrelevant beginning parts of the code that are always the same.
     @Column(nullable = false)
     private int solutionStartIndex;
+
+    // The index at which the relevant code logic ends.
+    // This lets ignore the irrelevant ending parts of the code that are always the same.
     @Column(nullable = false)
     private int solutionEndLength;
 
+    // The lesson that this problem is part of.
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lesson_id", referencedColumnName = "id")
     private Lesson lesson;
 
+    // The list of model solutions for this problem.
     @OneToMany(mappedBy = "problem")
     private List<Solution> solutions;
 
+    // The list of misconceptions for this problem.
     @OneToMany(mappedBy = "problem")
     private List<Misconception> misconceptions;
+
+    /*
+     * Getters and setters
+     */
 
     public long getId() {
         return id;
@@ -104,6 +124,9 @@ public class Problem {
         this.misconceptions = misconceptions;
     }
 
+    /*
+     * Sets the problemBody field of the object to the contents of the problem file.
+     */
     public void setProblemBody() {
         try {
             this.problemBody = FileIO.resourceFileToString(this.getProblemFile());

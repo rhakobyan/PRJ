@@ -53,6 +53,6 @@ public class HomeControllerTest {
                 .andExpect(view().name("dashboard"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().size(2))
-                .andExpect(model().attributeExists("topics", "totalLessons"));
+                .andExpect(model().attributeExists("topics", "totalMaterial"));
     }
 }

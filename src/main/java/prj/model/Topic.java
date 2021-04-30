@@ -4,8 +4,9 @@ import javax.persistence.*;
 import java.util.List;
 
 /*
- * The topic class represents a topic entity in the system.
- * This class uses Spring JPA to mark fields as columns in the database.
+ * The Topic class represents a topic entity in the system.
+ * Spring Data JPA annotations are applied to the class in order to represent it as a table inside the database.
+ * Using Spring Data JPA its fields are marked as columns in the table.
  */
 @Entity
 @Table(name = "topic")
@@ -20,17 +21,19 @@ public class Topic {
     @Column(nullable = false, length = 500)
     private String description;
 
-    // URL link to the image
+    // URL link to an image associated with it
     @Column(nullable = false)
     private String image;
 
+    // The list of lessons that are inside of the topic
     @OneToMany(mappedBy = "topic")
     private List<Lesson> lessons;
 
+    // The quiz that is inside of the topic
     @OneToOne(mappedBy = "topic")
     private Quiz quiz;
 
-    /**
+    /*
      * Getters and setters
      */
 

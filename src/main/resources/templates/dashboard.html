@@ -12,8 +12,8 @@
                 <div style="margin-bottom:50px;">
                     <h5>Your Progress</h5>
                     <div class="progress" style="height: 35px;">
-                        <div class="progress-bar" role="progressbar" th:style="'width: '+${((#authentication.getPrincipal().getUser().completedLessons.size + #authentication.getPrincipal().getUser().completedQuizzes.size) * 100)/(totalLessons + 4)}+'%;'" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
-                        th:text="${((#authentication.getPrincipal().getUser().completedLessons.size + #authentication.getPrincipal().getUser().completedQuizzes.size) * 100)/(totalLessons + 4)} + '%'">
+                        <div class="progress-bar" role="progressbar" th:style="'width: '+${((#authentication.getPrincipal().getUser().completedLessons.size + #authentication.getPrincipal().getUser().completedQuizzes.size) * 100)/(totalMaterial)}+'%;'" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
+                        th:text="${((#authentication.getPrincipal().getUser().completedLessons.size + #authentication.getPrincipal().getUser().completedQuizzes.size) * 100)/(totalMaterial)} + '%'">
                         </div>
                     </div>
                 </div>

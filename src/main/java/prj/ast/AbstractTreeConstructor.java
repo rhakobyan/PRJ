@@ -5,18 +5,36 @@ import org.antlr.v4.runtime.misc.Interval;
 import prj.antlr.JavaParser;
 import prj.antlr.JavaParserBaseVisitor;
 
+/*
+ * The AbstractTreeConstructor class is used for traversing a Parse Tree and constructing
+ * an abstract syntax tree from it.
+ * The visitor pattern, extended from JavaParserBaseVisitor, is used for the traversal.
+ * The Abstract Syntax Tree is represented using JavaASTNode object.
+ */
 public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> {
 
+    /*
+     * This methods visits a block and the expressions inside of it.
+     * Blocks in Java are represented using the {, } symbols.
+     * The visited block is added to the Abstract Syntax Tree as a node.
+     */
     @Override
     public JavaASTNode visitBlock(JavaParser.BlockContext ctx) {
+        // Create a new block AST node
         JavaASTNode block = new JavaASTNode("block",ctx.getText());
 
+        // Visit all the expressions inside the block and as them as children nodes to the block
         for (int i = 0; i < ctx.blockStatement().size(); ++i)
             block.addChild(visit(ctx.blockStatement(i)));
 
         return block;
     }
 
+    /*
+     * This method visits statements and adds them to the Abstract Syntax Tree.
+     * Depending on the type of the node, this method will create an appropriate JavaAST node
+     * and add the different parts that make up the statement as children nodes.
+     */
     @Override
     public JavaASTNode visitStatement(JavaParser.StatementContext ctx) {
         // The below if-else block checks the type of statement that has been passed and constructs the
@@ -134,8 +152,6 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
      * This method visits expressions that are inside parentheses.
      * Essentially this method discards the "(" and ")" symbols and puts the expression
      * inside of them in a JavaAST node.
-     * @param ctx The JavaParser context.
-     * @return The generated AST node of the expression inside the parentheses.
      */
     @Override
     public JavaASTNode visitParExpression(JavaParser.ParExpressionContext ctx) {
@@ -145,6 +161,9 @@ public class AbstractTreeConstructor extends JavaParserBaseVisitor<JavaASTNode> 
         return visit(ctx.expression());
     }
 
+    /*
+     * This method visits expression types and adds them to Abstract Syntax Tree.
+     */
     @Override
     public JavaASTNode visitExpression(JavaParser.ExpressionContext ctx) {
         if (ctx.getChildCount() == 0) {

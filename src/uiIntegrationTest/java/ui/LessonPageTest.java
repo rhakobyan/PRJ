@@ -22,7 +22,7 @@ public class LessonPageTest {
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        System.setProperty(" webdriver.chrome.driver", "chromedriver");
+        System.setProperty(" webdriver.chrome.driver", ChromeDriverLocation.location);
         driver = new ChromeDriver();
 
         driver.get("http://localhost:8000/login");
