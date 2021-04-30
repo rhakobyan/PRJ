@@ -1,6 +1,7 @@
 package prj.util;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -17,12 +18,8 @@ public class FileIO {
      * @throws IOException if no file is found at the requested path.
      */
     public static String resourceFileToString(String path) throws IOException {
-        File file = new ClassPathResource(path).getFile();
-        FileInputStream fis = new FileInputStream(file);
-        byte[] data = new byte[(int) file.length()];
-
-        fis.read(data);
-        fis.close();
+        ClassPathResource cpr = new ClassPathResource(path);
+        byte[] data = FileCopyUtils.copyToByteArray(cpr.getInputStream());
 
         return new String(data, StandardCharsets.UTF_8);
     }
